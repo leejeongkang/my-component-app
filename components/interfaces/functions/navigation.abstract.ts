@@ -1,9 +1,7 @@
-export abstract class NavigationFunctionality {
-  abstract moveItem(currentItem: RefImpl, item: number): void;
-  abstract moveNextItem(currentItem: RefImpl, item: number): void;
-  abstract movePrevItem(currentItem: RefImpl): void;
-}
+import { Ref } from "vue";
 
-type RefImpl = {
-  value: any;
-};
+export abstract class NavigationFunctionality {
+  abstract moveItem(currentItem: Ref, item: number): void;
+  abstract moveNextItem(currentItem: Ref, item: number): void;
+  abstract movePrevItem(currentItem: Ref): void;
+}

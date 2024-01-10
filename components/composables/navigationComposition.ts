@@ -4,17 +4,17 @@ import { NavigationEvents } from "@/components/interfaces/events/navigation.abst
 import { Ref, ref } from "vue";
 
 class CustomNavigationFunctionality extends NavigationFunctionality {
-  moveItem(currentItem: RefImpl, item: number): void {
+  moveItem(currentItem: Ref, item: number): void {
     currentItem.value = item;
   }
-  moveNextItem(currentItem: RefImpl, dataLen: number): void {
+  moveNextItem(currentItem: Ref, dataLen: number): void {
     if (currentItem.value + 1 < dataLen) {
       currentItem.value++;
     } else {
       alert("data 길이 초과");
     }
   }
-  movePrevItem(currentItem: RefImpl): void {
+  movePrevItem(currentItem: Ref): void {
     if (currentItem.value - 1 >= 0) {
       currentItem.value--;
     } else {
@@ -22,9 +22,7 @@ class CustomNavigationFunctionality extends NavigationFunctionality {
     }
   }
 }
-type RefImpl = {
-  value: any;
-};
+
 export interface UseNavigationCompositionOptions
   extends NavigationProps,
     NavigationEvents {
