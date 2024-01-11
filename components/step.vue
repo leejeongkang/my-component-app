@@ -2,35 +2,45 @@
   <h3>현재 스텝 {{ data[currentItem][labelKey] }} Index : {{ currentItem }}</h3>
   <p>디폴트는 0 입니당.</p>
   <div class="step-container">
-    <button @click="movePrevItem">이전</button>
     <div
       v-for="(item, index) in data"
-      @click="moveItem(index)"
+      @click="moveStep(index)"
       class="flex-item"
     >
       <div>
-        <span :class="{ 'current-step': currentItem === index }">
+        <span :class="{ 'current-step': currentItem >= index }">
           {{ item[labelKey] }}
         </span>
       </div>
     </div>
-    <button @click="moveNextItem">다음</button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineProps } from "vue";
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
-const props = defineProps(["data", "labelKey", "valueKey", "iconKey"]);
+const props = defineProps([
+  "data",
+  "labelKey",
+  "valueKey",
+  "iconKey",
+  "currentItem",
+]);
 const emit = defineEmits(["change"]);
 
-const { currentItem, moveItem, moveNextItem, movePrevItem } =
-  navigationComposition({
-    ...props,
-    onChange: (idx: number) => {
-      emit("change", idx);
-    },
-  });
+const { moveItem } = navigationComposition({
+  ...props,
+  onChange: (idx: number) => {
+    emit("change", idx);
+  },
+});
+function moveStep(idx: number) {
+  if (props.currentItem < idx) {
+    return null;
+  } else {
+    moveItem(idx);
+  }
+}
 </script>
 
 <style>

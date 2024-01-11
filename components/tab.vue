@@ -17,17 +17,25 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
-const props = defineProps(["data", "labelKey", "valueKey", "iconKey"]);
+const props = defineProps([
+  "data",
+  "labelKey",
+  "valueKey",
+  "iconKey",
+  "currentItem",
+]);
 const emit = defineEmits(["change"]);
 
-const { currentItem, moveItem } = navigationComposition({
+const { moveItem } = navigationComposition({
   ...props,
   onChange: (idx: number) => {
-    emit("change", props.data[idx][props.valueKey]);
+    //emit("change", props.data[idx][props.valueKey]);
+    emit("change", idx);
   },
 });
+moveItem(props.currentItem);
 </script>
 
 <style>

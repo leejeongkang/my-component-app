@@ -1,11 +1,11 @@
-import { Ref } from "vue/dist/vue";
+import { Ref } from "vue";
 
 export interface NavigationProps {
-  data: Array<string | number>;
+  data: Array<object>;
   labelKey: string;
   valueKey?: string;
   iconKey?: string;
-  currentIdx?: Ref<number>;
+  currentItem?: Ref<number>;
 }
 
 // export class NavigationConfig implements NavigationProps {
