@@ -35,11 +35,8 @@ const { moveItem } = navigationComposition({
   },
 });
 function moveStep(idx: number) {
-  if (props.currentItem < idx) {
-    return null;
-  } else {
-    moveItem(idx);
-  }
+  if (props.currentItem < idx) return;
+  return moveItem(idx);
 }
 </script>
 

@@ -22,9 +22,10 @@ export function navigationComposition(
   const currentItem = options.currentItem || ref<number>(0);
 
   function moveItem(item: number) {
-    const functionality =
-      options.functionality || new CustomNavigationFunctionality();
-    functionality.moveItem(currentItem, item);
+    const moveItemFunctionality =
+      options.functionality?.moveItem ||
+      new CustomNavigationFunctionality().moveItem;
+    moveItemFunctionality(currentItem, item);
     options.onChange(item);
   }
 
