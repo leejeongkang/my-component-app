@@ -1,32 +1,32 @@
-// src/components/functional/composables/selectComposition.ts
 import { ref, Ref } from "vue";
 import { SelectProps } from "@/components/interfaces/props/select.interface";
-import { SelectFunctionality } from "@/components/interfaces/functions/select.abstract";
-import { SelectEvents } from "@/components/interfaces/events/select.abstract";
+import { SelectFunctionality } from "@/components/interfaces/functions/select.interface";
+import { SelectEvents } from "@/components/interfaces/events/select.interface";
 
-// SelectFunctionality를 상속받는 구체적인 클래스 정의 toggleList 추상 메서드를 구체적으로 구현
-class CustomSelectFunctionality extends SelectFunctionality {
-  // Overriding
+// 공통 속성, 내부함수, 이벤트를 상속받은 클래스 정의
+export class UseSelectCompositionOptions
+  implements SelectProps, SelectEvents, SelectFunctionality
+{
+  selectedValue?: Ref<string | number | null>;
+  selectedLabel?: Ref<string>;
+  // toggleList는 select box의 옵션의 값을 show/hide 하는 기능이다.
+  // 공통 Composition API에서는 컴포넌트의 기본 기능을 제공한다.
   toggleList(isShowBox: Ref<boolean>): void {
-    // 실제 기능을 여기에 구현
+    console.log("composition toggleList");
     isShowBox.value = !isShowBox.value;
   }
 }
 
-// options
-export interface UseSelectCompositionOptions extends SelectProps, SelectEvents {
-  selectedValue?: Ref<string | number | null>;
-  selectedLabel?: Ref<string>;
-  functionality?: SelectFunctionality;
-}
-
+// 공통 Composition API
 export function selectComposition(options: UseSelectCompositionOptions) {
+  // 객체 생성
+  const selectComposition = new UseSelectCompositionOptions();
   const selectedValue =
     options.selectedValue || ref<string | number | null>(null);
   const selectedLabel = options.selectedValue || ref<string>("");
   const isShowBox = ref(false);
 
-  // 선택
+  // select 계열 컴포넌트 옵션 선택 기능
   const handleSelect = (option: Record<string, string | number>) => {
     // valueKey에 해당하는 값을 selectedValue에 저장
     selectedValue.value = option[options.valueKey];
@@ -37,13 +37,12 @@ export function selectComposition(options: UseSelectCompositionOptions) {
     isShowBox.value = false;
   };
 
-  // option show/hide
-  // toggleList 맵핑
-  const toggleList = () => {
-    // 사용자가 토글 함수를 정의하거나 재정의한 함수를 사용하거나
+  // select 계열 option show/hide
+  const handleToggleList = () => {
+    // 컴포넌트에서 직접 작성한 toggleList를 사용할지
+    // UseSelectCompositionOptions 클래스에서 정의한 toggleList를 사용할지 여부를 결정한다.
     const toggleListFunctionality =
-      options.functionality?.toggleList ||
-      new CustomSelectFunctionality().toggleList;
+      options.toggleList || selectComposition.toggleList;
     toggleListFunctionality(isShowBox);
   };
 
@@ -51,7 +50,7 @@ export function selectComposition(options: UseSelectCompositionOptions) {
     selectedLabel,
     selectedValue,
     handleSelect,
-    toggleList,
+    handleToggleList,
     isShowBox,
     ...options,
   };
