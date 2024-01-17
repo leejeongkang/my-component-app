@@ -8,7 +8,11 @@
       class="flex-item"
     >
       <div>
-        <span :class="{ 'current-step': currentItem >= index }">
+        <span
+          :class="{
+            'current-step': classCurrentStep(data[props.valueKey], index),
+          }"
+        >
           {{ item[labelKey] }}
         </span>
       </div>
@@ -19,25 +23,48 @@
 <script lang="ts" setup>
 import { defineProps } from "vue";
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
-const props = defineProps([
-  "data",
-  "labelKey",
-  "valueKey",
-  "iconKey",
-  "currentItem",
-]);
+import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
+import type { PropType } from "vue";
+const props = defineProps({
+  data: {
+    type: Array,
+  },
+  labelKey: {
+    type: String,
+    default: "label",
+  },
+  valueKey: {
+    type: String,
+    default: "value",
+  },
+  iconKey: {
+    type: String,
+    default: "icon",
+  },
+  currentItem: {
+    type: [Number, String],
+    default: 0,
+  },
+  currentItemType: {
+    type: String as PropType<NavigationItemEnum>,
+    default: NavigationItemEnum.Number,
+  },
+});
 const emit = defineEmits(["change"]);
 
-const { moveItem } = navigationComposition({
+const { activeCurrentItem, handleMoveItem } = navigationComposition({
   ...props,
-  onChange: (idx: number) => {
+  onChange(idx: number | string): void {
     emit("change", idx);
   },
 });
-function moveStep(idx: number) {
+function moveStep(idx: number): void {
   if (props.currentItem < idx) return;
-  return moveItem(idx);
+  return handleMoveItem(idx);
 }
+const classCurrentStep = (value: string, index: number): boolean => {
+  return props.currentItem >= activeCurrentItem(value, index);
+};
 </script>
 
 <style>

@@ -3,11 +3,15 @@
     <div class="flex-container">
       <div
         v-for="(item, index) in data"
-        @click="moveItem(index)"
+        @click="moveItem(item[props.valueKey], index)"
         class="flex-tab"
       >
         <div>
-          <span :class="{ 'current-tab': currentItem === index }">
+          <span
+            :class="{
+              'current-tab': classCurrentTab(item[props.valueKey], index),
+            }"
+          >
             {{ item[labelKey] }}
           </span>
         </div>
@@ -17,25 +21,54 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, ref } from "vue";
+// defineProps, emit 찾아보기
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
-const props = defineProps([
-  "data",
-  "labelKey",
-  "valueKey",
-  "iconKey",
-  "currentItem",
-]);
+import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
+import type { PropType } from "vue";
+const props = defineProps({
+  data: {
+    type: Array,
+  },
+  labelKey: {
+    type: String,
+    default: "label",
+  },
+  valueKey: {
+    type: String,
+    default: "value",
+  },
+  iconKey: {
+    type: String,
+    default: "icon",
+  },
+  currentItem: {
+    type: [Number, String],
+    default: 0,
+  },
+  currentItemType: {
+    type: String as PropType<NavigationItemEnum>,
+    default: NavigationItemEnum.Number,
+  },
+});
 const emit = defineEmits(["change"]);
 
-const { moveItem } = navigationComposition({
+const { activeCurrentItem, handleMoveItem } = navigationComposition({
   ...props,
-  onChange: (idx: number) => {
-    //emit("change", props.data[idx][props.valueKey]);
+  onChange(idx: number | string): void {
     emit("change", idx);
   },
 });
-moveItem(props.currentItem);
+function moveItem(value: string, index: number): void {
+  if (props.currentItemType === NavigationItemEnum.Number) {
+    handleMoveItem(index);
+  } else if (props.currentItemType === NavigationItemEnum.String) {
+    handleMoveItem(value);
+  }
+}
+handleMoveItem(props.currentItem);
+const classCurrentTab = (value: string, index: number): boolean => {
+  return props.currentItem === activeCurrentItem(value, index);
+};
 </script>
 
 <style>

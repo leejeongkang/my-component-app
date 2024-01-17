@@ -1,36 +1,44 @@
-import { NavigationFunctionality } from "@/components/interfaces/functions/navigation.abstract";
+import { NavigationFunctionality } from "@/components/interfaces/functions/navigation.interface";
 import { NavigationProps } from "@/components/interfaces/props/navigation.interface";
-import { NavigationEvents } from "@/components/interfaces/events/navigation.abstract";
+import { NavigationEvents } from "@/components/interfaces/events/navigation.interface";
 import { Ref, ref } from "vue";
+import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
 
-class CustomNavigationFunctionality extends NavigationFunctionality {
-  moveItem(currentItem: Ref, item: number): void {
-    currentItem.value = item;
+export class UseNavigationCompositionOptions
+  implements NavigationProps, NavigationEvents, NavigationFunctionality
+{
+  data: Array<object>;
+  activeItem?: Ref<number | string>;
+  currentItemType?: NavigationItemEnum;
+  moveItem(activeItem: Ref<number | string>, item: number | string): void {
+    activeItem.value = item;
   }
-}
-
-export interface UseNavigationCompositionOptions
-  extends NavigationProps,
-    NavigationEvents {
-  currentItem: Ref<number>;
-  functionality?: NavigationFunctionality;
 }
 
 export function navigationComposition(
   options: UseNavigationCompositionOptions,
 ) {
-  const currentItem = options.currentItem || ref<number>(0);
+  const navigationComposition = new UseNavigationCompositionOptions();
+  const activeItem = options.activeItem || ref<number>(0);
+  const currentItemType = options.currentItemType;
 
-  function moveItem(item: number) {
+  function activeCurrentItem(value: string, index: number) {
+    if (currentItemType === NavigationItemEnum.String) {
+      return value;
+    } else if (currentItemType === NavigationItemEnum.Number) {
+      return index;
+    }
+  }
+  function handleMoveItem(item: number | string) {
     const moveItemFunctionality =
-      options.functionality?.moveItem ||
-      new CustomNavigationFunctionality().moveItem;
-    moveItemFunctionality(currentItem, item);
+      options.moveItem || navigationComposition.moveItem;
+    moveItemFunctionality(activeItem, item);
     options.onChange(item);
   }
 
   return {
     ...options,
-    moveItem,
+    activeCurrentItem,
+    handleMoveItem,
   };
 }
