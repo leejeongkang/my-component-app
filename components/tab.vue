@@ -3,7 +3,9 @@
     <div class="flex-container">
       <div
         v-for="(item, index) in data"
-        @click="moveItem(item[props.valueKey], index)"
+        @click="
+          handleMoveItem(getValueBasedOnType(item[props.valueKey], index))
+        "
         class="flex-tab"
       >
         <div>
@@ -57,20 +59,13 @@ const props = defineProps({
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 
-const { activeCurrentItem, compareValues, handleMoveItem } =
+const { getValueBasedOnType, compareValues, handleMoveItem } =
   navigationComposition({
     ...props,
     onChange(item: number | string): void {
       emit("change", item);
     },
   });
-function moveItem(value: string, index: number): void {
-  if (props.currentItemType === NavigationItemEnum.Number) {
-    handleMoveItem(index);
-  } else if (props.currentItemType === NavigationItemEnum.String) {
-    handleMoveItem(value);
-  }
-}
 handleMoveItem(props.currentItem);
 
 /**
@@ -79,14 +74,15 @@ handleMoveItem(props.currentItem);
  * @param index
  */
 const classCurrentTab = (value: string, index: number): boolean => {
-  let activeItem: string | number = activeCurrentItem(value, index);
-  let type: ComparisonOperator;
-  if (typeof activeItem === "number") {
-    type = props.comparison as ComparisonOperator;
+  let clickedItem: string | number = getValueBasedOnType(value, index);
+  let comparison: ComparisonOperator;
+  if (props.currentItemType === NavigationItemEnum.Number) {
+    comparison = props.comparison as ComparisonOperator;
   } else {
-    type = ComparisonOperator.EQUAL;
+    comparison = ComparisonOperator.EQUAL;
   }
-  return compareValues(props.currentItem, activeItem as number, type);
+  // NOTE: as number -> 컴파일 시 변수를 num 으로 강제 변환
+  return compareValues(props.currentItem, clickedItem, comparison);
 };
 </script>
 
@@ -109,3 +105,5 @@ const classCurrentTab = (value: string, index: number): boolean => {
   border: 5px;
 }
 </style>
+<!--TODO: activeItem 자체를 변경하고 바로 프롭스로 변경하기 class fucntion도-->
+<!--내부에서-->

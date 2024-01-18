@@ -57,7 +57,7 @@ const props = defineProps({
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 
-const { activeCurrentItem, compareValues, handleMoveItem } =
+const { getValueBasedOnType, compareValues, handleMoveItem } =
   navigationComposition({
     ...props,
     onChange(item: number | string): void {
@@ -71,18 +71,19 @@ function moveStep(idx: number): void {
 
 /**
  * currentItemType 이 String 일 경우 에는 EQUAL 사용 권장
+ * TODO: String 일 경우에 index param 넣어서 모든 부등호 사용 가능 하도록 개발
  * @param value
  * @param index
  */
 const classCurrentStep = (value: string, index: number): boolean => {
-  let activeItem: string | number = activeCurrentItem(value, index);
-  let type: ComparisonOperator;
-  if (typeof activeItem === "number") {
-    type = props.comparison as ComparisonOperator;
+  let clickedItem: string | number = getValueBasedOnType(value, index);
+  let comparison: ComparisonOperator;
+  if (typeof clickedItem === "number") {
+    comparison = props.comparison as ComparisonOperator;
   } else {
-    type = ComparisonOperator.EQUAL;
+    comparison = ComparisonOperator.EQUAL;
   }
-  return compareValues(props.currentItem, activeItem as number, type);
+  return compareValues(props.currentItem, clickedItem, comparison);
 };
 </script>
 
@@ -104,3 +105,6 @@ const classCurrentStep = (value: string, index: number): boolean => {
   color: orange; /* 현재 스텝에 대한 글자 색상을 여기에 지정 */
 }
 </style>
+<!-- slot 사용 개발 해보기
+  disabled 자동화
+  -->

@@ -1,9 +1,9 @@
 import { NavigationFunctionality } from "@/components/interfaces/functions/navigation.interface";
 import { NavigationProps } from "@/components/interfaces/props/navigation.interface";
 import { NavigationEvents } from "@/components/interfaces/events/navigation.interface";
-import { Ref, ref } from "vue";
 import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
 import { ComparisonOperator } from "@/components/types/comparisonOperator";
+import { Ref, ref } from "vue";
 
 export class UseNavigationCompositionOptions
   implements NavigationProps, NavigationEvents, NavigationFunctionality
@@ -21,8 +21,9 @@ export function navigationComposition(
   const navigationComposition = new UseNavigationCompositionOptions();
   const activeItem = options.activeItem || ref<number>(0);
   const currentItemType = options.currentItemType;
+  // TODO: 현재 인덱스 저장 하는 변수 하나 만들기
 
-  function activeCurrentItem(value: string, index: number) {
+  function getValueBasedOnType(value: string, index: number) {
     if (currentItemType === NavigationItemEnum.String) {
       return value;
     } else if (currentItemType === NavigationItemEnum.Number) {
@@ -43,18 +44,10 @@ export function navigationComposition(
     comparison: ComparisonOperator,
   ): boolean => {
     switch (comparison) {
-      case ComparisonOperator.GREATER_THAN:
-        return a > b;
-      case ComparisonOperator.LESS_THAN:
-        return a < b;
       case ComparisonOperator.GREATER_THAN_OR_EQUAL:
         return a >= b;
-      case ComparisonOperator.LESS_THAN_OR_EQUAL:
-        return a <= b;
       case ComparisonOperator.EQUAL:
         return a === b;
-      case ComparisonOperator.NOT_EQUAL:
-        return a !== b;
       default:
         throw new Error(`Unsupported comparison operator: ${comparison}`);
     }
@@ -69,8 +62,14 @@ export function navigationComposition(
 
   return {
     ...options,
-    activeCurrentItem,
+    getValueBasedOnType,
     compareValues,
     handleMoveItem,
   };
 }
+/** TODO
+ * 내부는 무조건 index 로 로직
+ * value로 줘도 내부에서 index 찾아서 처리
+ * 이유 : 탭, 스탭 동작 통일 시키기 위해서
+ * 방법 : index
+ */
