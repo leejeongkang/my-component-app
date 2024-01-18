@@ -42,20 +42,20 @@ const props = defineProps({
     default: "icon",
   },
   currentItem: {
-    type: [Number, String],
+    type: Number,
     default: 0,
   },
   currentItemType: {
-    type: String as PropType<NavigationItemEnum>,
+    type: Number as PropType<NavigationItemEnum>,
     default: NavigationItemEnum.Number,
   },
 });
-const emit = defineEmits(["change"]);
+const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 
 const { activeCurrentItem, handleMoveItem } = navigationComposition({
   ...props,
-  onChange(idx: number | string): void {
-    emit("change", idx);
+  onChange(item: number | string): void {
+    emit("change", item);
   },
 });
 function moveStep(idx: number): void {
