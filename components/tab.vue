@@ -24,6 +24,7 @@
 // defineProps, emit 찾아보기
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
 import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
+import { ComparisonOperator } from "@/components/types/comparisonOperator";
 import type { PropType } from "vue";
 const props = defineProps({
   data: {
@@ -49,15 +50,20 @@ const props = defineProps({
     type: Number as PropType<NavigationItemEnum>,
     default: NavigationItemEnum.Number,
   },
+  comparison: {
+    type: Number as PropType<ComparisonOperator>,
+    default: ComparisonOperator.EQUAL,
+  },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 
-const { activeCurrentItem, handleMoveItem } = navigationComposition({
-  ...props,
-  onChange(item: number | string): void {
-    emit("change", item);
-  },
-});
+const { activeCurrentItem, compareValues, handleMoveItem } =
+  navigationComposition({
+    ...props,
+    onChange(item: number | string): void {
+      emit("change", item);
+    },
+  });
 function moveItem(value: string, index: number): void {
   if (props.currentItemType === NavigationItemEnum.Number) {
     handleMoveItem(index);
@@ -66,8 +72,21 @@ function moveItem(value: string, index: number): void {
   }
 }
 handleMoveItem(props.currentItem);
+
+/**
+ * currentItemType 이 String 일 경우 에는 EQUAL 사용 권장
+ * @param value
+ * @param index
+ */
 const classCurrentTab = (value: string, index: number): boolean => {
-  return props.currentItem === activeCurrentItem(value, index);
+  let activeItem: string | number = activeCurrentItem(value, index);
+  let type: ComparisonOperator;
+  if (typeof activeItem === "number") {
+    type = props.comparison as ComparisonOperator;
+  } else {
+    type = ComparisonOperator.EQUAL;
+  }
+  return compareValues(props.currentItem, activeItem as number, type);
 };
 </script>
 

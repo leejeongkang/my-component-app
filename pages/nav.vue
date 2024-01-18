@@ -6,6 +6,7 @@
       :label-key="'label'"
       :current-item="currentStep"
       :current-item-type="NavigationItemEnum.Number"
+      :comparison="ComparisonOperator.GREATER_THAN_OR_EQUAL"
       @change="changeStep"
     ></Step>
     <div>
@@ -35,6 +36,7 @@
       :value-key="'value'"
       :current-item="currentTab2"
       :current-item-type="NavigationItemEnum.Number"
+      :comparison="ComparisonOperator.NOT_EQUAL"
       @change="changeTab2"
     ></Tab>
   </div>
@@ -43,6 +45,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
+import { ComparisonOperator } from "@/components/types/comparisonOperator";
 /**
  * STEP
  */

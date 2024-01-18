@@ -1,6 +1,5 @@
 <template>
   <h3>현재 스텝 {{ data[currentItem][labelKey] }} Index : {{ currentItem }}</h3>
-  <p>디폴트는 0 입니당.</p>
   <div class="step-container">
     <div
       v-for="(item, index) in data"
@@ -21,10 +20,12 @@
 </template>
 
 <script lang="ts" setup>
+import type { PropType } from "vue";
 import { defineProps } from "vue";
 import { navigationComposition } from "@/components/composables/navigationComposition.ts";
 import { NavigationItemEnum } from "@/components/types/navigationItemEnum";
-import type { PropType } from "vue";
+import { ComparisonOperator } from "@/components/types/comparisonOperator";
+
 const props = defineProps({
   data: {
     type: Array,
@@ -49,21 +50,39 @@ const props = defineProps({
     type: Number as PropType<NavigationItemEnum>,
     default: NavigationItemEnum.Number,
   },
+  comparison: {
+    type: Number as PropType<ComparisonOperator>,
+    default: ComparisonOperator.EQUAL,
+  },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 
-const { activeCurrentItem, handleMoveItem } = navigationComposition({
-  ...props,
-  onChange(item: number | string): void {
-    emit("change", item);
-  },
-});
+const { activeCurrentItem, compareValues, handleMoveItem } =
+  navigationComposition({
+    ...props,
+    onChange(item: number | string): void {
+      emit("change", item);
+    },
+  });
 function moveStep(idx: number): void {
   if (props.currentItem < idx) return;
   return handleMoveItem(idx);
 }
+
+/**
+ * currentItemType 이 String 일 경우 에는 EQUAL 사용 권장
+ * @param value
+ * @param index
+ */
 const classCurrentStep = (value: string, index: number): boolean => {
-  return props.currentItem >= activeCurrentItem(value, index);
+  let activeItem: string | number = activeCurrentItem(value, index);
+  let type: ComparisonOperator;
+  if (typeof activeItem === "number") {
+    type = props.comparison as ComparisonOperator;
+  } else {
+    type = ComparisonOperator.EQUAL;
+  }
+  return compareValues(props.currentItem, activeItem as number, type);
 };
 </script>
 
