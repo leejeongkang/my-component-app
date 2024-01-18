@@ -2,17 +2,21 @@
   <div>
     <h1>Step Example</h1>
     <Step
+      :slots="slots"
       :data="stepOptions"
       :label-key="'label'"
       :current-item="currentStep"
       :current-item-type="NavigationItemEnum.Number"
       :comparison="ComparisonOperator.GREATER_THAN_OR_EQUAL"
       @change="changeStep"
-    ></Step>
-    <div>
-      <button @click="movePrevStep">이전</button
-      ><button @click="moveNextStep">다음</button>
-    </div>
+    >
+      <template v-slot:hi>
+        <div>hi</div>
+      </template>
+      <template v-slot:default>
+        <div>default</div>
+      </template>
+    </Step>
 
     <h1>Tab Example</h1>
     <h3>type: string || Emit : {{ currentTab }}</h3>
@@ -36,7 +40,7 @@
       :value-key="'value'"
       :current-item="currentTab2"
       :current-item-type="NavigationItemEnum.Number"
-      :comparison="ComparisonOperator.NOT_EQUAL"
+      :comparison="ComparisonOperator.EQUAL"
       @change="changeTab2"
     ></Tab>
   </div>
@@ -49,6 +53,7 @@ import { ComparisonOperator } from "@/components/types/comparisonOperator";
 /**
  * STEP
  */
+const slots = ["hi", "default"];
 const stepOptions = [
   { label: "Step1", value: "Step1" },
   { label: "Step2", value: "Step2" },
@@ -58,20 +63,6 @@ const stepOptions = [
 const currentStep = ref(2);
 function changeStep(value: number) {
   currentStep.value = value;
-}
-function movePrevStep() {
-  if (currentStep.value - 1 < 0) {
-    return alert("0보다 작으면 안됌");
-  } else {
-    currentStep.value--;
-  }
-}
-function moveNextStep() {
-  if (currentStep.value + 1 >= stepOptions.length) {
-    return alert("데이터 길이 넘어가면 안됍니다.");
-  } else {
-    currentStep.value++;
-  }
 }
 
 /**

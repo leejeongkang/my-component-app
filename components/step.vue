@@ -16,6 +16,20 @@
         </span>
       </div>
     </div>
+    <slot v-for="slot in slots" :name="slot"></slot>
+    <div v-if="showBtn">
+      <button
+        @click="handleMoveItem(currentItem - 1)"
+        :disabled="currentItem === 0"
+      >
+        이전</button
+      ><button
+        @click="handleMoveItem(currentItem + 1)"
+        :disabled="currentItem + 1 >= data.length"
+      >
+        다음
+      </button>
+    </div>
   </div>
 </template>
 
@@ -29,6 +43,13 @@ import { ComparisonOperator } from "@/components/types/comparisonOperator";
 const props = defineProps({
   data: {
     type: Array,
+  },
+  slots: {
+    type: Array,
+  },
+  showBtn: {
+    type: Boolean,
+    default: true,
   },
   labelKey: {
     type: String,
@@ -105,6 +126,3 @@ const classCurrentStep = (value: string, index: number): boolean => {
   color: orange; /* 현재 스텝에 대한 글자 색상을 여기에 지정 */
 }
 </style>
-<!-- slot 사용 개발 해보기
-  disabled 자동화
-  -->
