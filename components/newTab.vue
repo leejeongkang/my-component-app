@@ -1,16 +1,12 @@
 <template>
   <div class="flex-container">
     <div
-        v-for="(item, index) in data"
-        @click="
-        moveItem(index)
-      "
-        class="flex-tab"
+      v-for="(item, index) in data"
+      @click="moveItem(index)"
+      class="flex-tab"
     >
       <div>
-        <span
-            :class="{ 'current-step': classCurrentTab(index) }"
-        >
+        <span :class="{ 'current-step': changeCurrentTabClass(index) }">
           {{ item[labelKey] }}
         </span>
       </div>
@@ -22,8 +18,9 @@
 <script lang="ts" setup>
 // defineProps, emit 찾아보기
 import { ComparisonOperator } from "@/components/types/comparisonOperator";
-import type { PropType } from "vue";
-import { ref } from "vue"
+import { ref } from "vue";
+const INDEX = "index";
+const VALUE = "value";
 const props = defineProps({
   data: {
     type: Array,
@@ -49,36 +46,42 @@ const props = defineProps({
    */
   currentItemType: {
     type: String,
-    default: "index",
+    default: INDEX,
   },
+  /**
+   * equal | greater
+   */
   comparison: {
-    type: Number as PropType<ComparisonOperator>,
+    type: String,
     default: ComparisonOperator.EQUAL,
   },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
-const INDEX = "index";
-const VALUE = "value";
-
 const currentIdx = ref();
+
 const { currentItem, currentItemType, data, valueKey, comparison } = props;
-if(currentItem) {
-  if(currentItemType === VALUE) {
-    currentIdx.value = data?.findIndex(item => item[valueKey].toString() === currentItem.toString())
+if (currentItem) {
+  if (currentItemType === VALUE) {
+    const foundIdx = data?.findIndex(
+      (item) => item[valueKey].toString() === currentItem.toString(),
+    );
+    if (foundIdx !== -1) {
+      currentIdx.value = foundIdx;
+    }
   } else {
-    currentIdx.value = currentItem
+    currentIdx.value = currentItem;
   }
 }
 function moveItem(index: number) {
   currentIdx.value = index;
-  if(currentItemType === INDEX) {
+  if (currentItemType === INDEX) {
     emit("change", index);
   } else {
-    let clickedValue: string | number = data?.[index][valueKey];
-    emit("change", clickedValue)
+    let clickedValue: string | number = (data?.[index] as any)?.[valueKey];
+    emit("change", clickedValue);
   }
 }
-const classCurrentTab = (clickedIdx: number): boolean => {
+const changeCurrentTabClass = (clickedIdx: number): boolean => {
   // NOTE: as number -> 컴파일 시 변수를 num 으로 강제 변환
   switch (comparison) {
     case ComparisonOperator.GREATER_THAN_OR_EQUAL:
@@ -86,7 +89,8 @@ const classCurrentTab = (clickedIdx: number): boolean => {
     case ComparisonOperator.EQUAL:
       return currentIdx.value === clickedIdx;
     default:
-      throw new Error(`Unsupported comparison operator: ${comparison}`);
+      console.error(`Unsupported comparison operator: ${comparison}`);
+      return false;
   }
 };
 </script>

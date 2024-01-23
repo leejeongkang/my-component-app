@@ -5,8 +5,29 @@
       :data="stepOptions"
       :label-key="'label'"
       :current-item="currentStep"
-      :comparison="ComparisonOperator.GREATER_THAN_OR_EQUAL"
+      :comparison="'equal'"
       @change="changeStep"
+    >
+      <template #Step1>
+        <div>스텝 1</div>
+      </template>
+      <template #Step2>
+        <div>스텝2</div>
+      </template>
+      <template #Step3>
+        <div>hi 스텝 33</div>
+      </template>
+      <template #Step4>
+        <div>스텝 4444</div>
+      </template>
+    </NewStep>
+    <NewStep
+      :data="stepOptions2"
+      :label-key="'label'"
+      :current-item="currentStep2"
+      :current-item-type="'value'"
+      :comparison="'greater'"
+      @change="changeStep2"
     >
       <template #Step1>
         <div>스텝 1</div>
@@ -52,16 +73,14 @@
       :value-key="'value'"
       :current-item="currentTab2"
       :current-item-type="'index'"
-      :comparison="ComparisonOperator.EQUAL"
+      :comparison="'equal'"
       @change="changeTab2"
     ></NewTab>
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref } from "vue";
-import { ComparisonOperator } from "@/components/types/comparisonOperator";
 /**
  * STEP
  */
@@ -74,6 +93,18 @@ const stepOptions = [
 const currentStep = ref(2);
 function changeStep(value: number) {
   currentStep.value = value;
+}
+
+const stepOptions2 = [
+  { label: "Step1", value: "Step1" },
+  { label: "Step2", value: "Step2" },
+  { label: "Step3", value: "Step3" },
+  { label: "Step4", value: "Step4" },
+];
+const currentStep2 = ref();
+currentStep2.value = "Step1";
+function changeStep2(value: number | string) {
+  currentStep2.value = value;
 }
 
 /**

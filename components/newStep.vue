@@ -1,5 +1,5 @@
 <template>
-  <h3>현재 스텝 {{ data[currentItem][labelKey] }} Index : {{ currentIdx }}</h3>
+  <h3>현재 스텝 {{ data[currentIdx][labelKey] }} Index : {{ currentIdx }}</h3>
   <div class="step-container">
     <div
       v-for="(item, index) in data"
@@ -7,9 +7,7 @@
       class="flex-item"
     >
       <div>
-        <span
-          :class="{ 'current-step': classCurrentStep(index) }"
-        >
+        <span :class="{ 'current-step': changeCurrentTabClass(index) }">
           {{ item[labelKey] }}
         </span>
       </div>
@@ -17,10 +15,7 @@
     <!-- hash tag 사용 -->
     <slot :name="data[currentIdx][valueKey]"></slot>
     <div v-if="showBtn">
-      <button
-        @click="moveItem(currentIdx - 1)"
-        :disabled="currentIdx === 0"
-      >
+      <button @click="moveItem(currentIdx - 1)" :disabled="currentIdx === 0">
         이전</button
       ><button
         @click="moveItem(currentIdx + 1)"
@@ -33,9 +28,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from "vue";
 import { defineProps, ref } from "vue";
 import { ComparisonOperator } from "@/components/types/comparisonOperator";
+const INDEX = "index";
+const VALUE = "value";
 
 const props = defineProps({
   data: {
@@ -58,46 +54,66 @@ const props = defineProps({
     default: "icon",
   },
   currentItem: {
-    type: Number,
+    type: [Number, String],
     default: 0,
   },
   /**
-   * only index
+   * index || value
    */
-  // currentItemType: {
-  //   type: String,
-  //   default: "index",
-  // },
+  currentItemType: {
+    type: String,
+    default: INDEX,
+  },
+  /**
+   * equal | greater
+   */
   comparison: {
-    type: Number as PropType<ComparisonOperator>,
-    default: ComparisonOperator.EQUAL,
+    type: String,
+    default: "equal",
   },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 const currentIdx = ref();
 
-const { currentItem, comparison } = props;
-if(currentItem) {
-  currentIdx.value = currentItem
+const { currentItem, currentItemType, comparison, data, valueKey } = props;
+if (currentItem) {
+  if (currentItemType === VALUE) {
+    const foundIdx = data?.findIndex(
+      (item) => item[valueKey].toString() === currentItem.toString(),
+    );
+    if (foundIdx !== -1) {
+      currentIdx.value = foundIdx;
+    }
+  } else {
+    currentIdx.value = currentItem;
+  }
 }
 function clickStep(index: number) {
-  if(currentIdx.value < index) return;
-  return moveItem(index)
+  if (currentIdx.value < index) {
+    return;
+  }
+  return moveItem(index);
 }
 function moveItem(index: number) {
-  currentIdx.value = index
-  emit("change", index)
+  currentIdx.value = index;
+  if (currentItemType === INDEX) {
+    emit("change", index);
+  } else {
+    let clickedValue: string | number = (data?.[index] as any)?.[valueKey];
+    emit("change", clickedValue);
+  }
 }
-const classCurrentStep = (clickedIdx: number): boolean => {
+const changeCurrentTabClass = (clickedIdx: number): boolean => {
   switch (comparison) {
     case ComparisonOperator.GREATER_THAN_OR_EQUAL:
       return currentIdx.value >= clickedIdx;
     case ComparisonOperator.EQUAL:
-      return currentIdx.value === clickedIdx
+      return currentIdx.value === clickedIdx;
     default:
-      throw new Error(`Unsupported comparison operator: ${comparison}`);
+      console.error(`Unsupported comparison operator: ${comparison}`);
+      return false;
   }
-}
+};
 </script>
 
 <style>
