@@ -17,7 +17,6 @@
 
 <script lang="ts" setup>
 // defineProps, emit 찾아보기
-import { ComparisonOperator } from "@/components/types/comparisonOperator";
 import { ref } from "vue";
 const INDEX = "index";
 const VALUE = "value";
@@ -48,18 +47,11 @@ const props = defineProps({
     type: String,
     default: INDEX,
   },
-  /**
-   * equal | greater
-   */
-  comparison: {
-    type: String,
-    default: ComparisonOperator.EQUAL,
-  },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 const currentIdx = ref();
 
-const { currentItem, currentItemType, data, valueKey, comparison } = props;
+const { currentItem, currentItemType, data, valueKey } = props;
 if (currentItem) {
   if (currentItemType === VALUE) {
     const foundIdx = data?.findIndex(
@@ -81,17 +73,9 @@ function moveItem(index: number) {
     emit("change", clickedValue);
   }
 }
+// NOTE: as number -> 컴파일 시 변수를 num 으로 강제 변환
 const changeCurrentTabClass = (clickedIdx: number): boolean => {
-  // NOTE: as number -> 컴파일 시 변수를 num 으로 강제 변환
-  switch (comparison) {
-    case ComparisonOperator.GREATER_THAN_OR_EQUAL:
-      return currentIdx.value >= clickedIdx;
-    case ComparisonOperator.EQUAL:
-      return currentIdx.value === clickedIdx;
-    default:
-      console.error(`Unsupported comparison operator: ${comparison}`);
-      return false;
-  }
+  return currentIdx.value === clickedIdx;
 };
 </script>
 

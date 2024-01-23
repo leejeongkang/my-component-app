@@ -69,7 +69,7 @@ const props = defineProps({
    */
   comparison: {
     type: String,
-    default: "equal",
+    default: ComparisonOperator.EQUAL,
   },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();

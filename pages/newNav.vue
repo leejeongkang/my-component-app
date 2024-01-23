@@ -73,7 +73,6 @@
       :value-key="'value'"
       :current-item="currentTab2"
       :current-item-type="'index'"
-      :comparison="'equal'"
       @change="changeTab2"
     ></NewTab>
   </div>
