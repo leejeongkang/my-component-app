@@ -1,5 +1,4 @@
 <template>
-  <h3>현재 스텝 {{ data[currentIdx][labelKey] }} Index : {{ currentIdx }}</h3>
   <div class="step-container">
     <div
       v-for="(item, index) in data"
@@ -12,7 +11,6 @@
         </span>
       </div>
     </div>
-    <!-- hash tag 사용 -->
     <slot :name="data[currentIdx][valueKey]"></slot>
     <div v-if="showBtn">
       <button @click="moveItem(currentIdx - 1)" :disabled="currentIdx === 0">
