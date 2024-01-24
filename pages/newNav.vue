@@ -50,6 +50,7 @@
       :value-key="'value'"
       :current-item="currentTab"
       :current-item-type="'value'"
+      :disabled-list="['city']"
       @change="changeTab"
     >
       <template #all>
@@ -73,6 +74,7 @@
       :value-key="'value'"
       :current-item="currentTab2"
       :current-item-type="'index'"
+      :disabled-list="[1, 3]"
       @change="changeTab2"
     ></NewTab>
   </div>

@@ -4,9 +4,10 @@
       v-for="(item, index) in data"
       @click="moveItem(index)"
       class="flex-tab"
+      :class="{ 'disabled-tab': isDisabled(item[valueKey]) }"
     >
       <div>
-        <span :class="{ 'current-step': changeCurrentTabClass(index) }">
+        <span :class="{ 'current-tab': changeCurrentTabClass(index) }">
           {{ item[labelKey] }}
         </span>
       </div>
@@ -47,11 +48,15 @@ const props = defineProps({
     type: String,
     default: INDEX,
   },
+  disabledList: {
+    type: Array<String | Number>,
+    default: [],
+  },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
 const currentIdx = ref();
 
-const { currentItem, currentItemType, data, valueKey } = props;
+const { currentItem, currentItemType, data, valueKey, disabledList } = props;
 if (currentItem) {
   if (currentItemType === VALUE) {
     const foundIdx = data?.findIndex(
@@ -77,6 +82,10 @@ function moveItem(index: number) {
 const changeCurrentTabClass = (clickedIdx: number): boolean => {
   return currentIdx.value === clickedIdx;
 };
+
+const isDisabled = (value: string | number): boolean => {
+  return disabledList.includes(value);
+};
 </script>
 
 <style>
@@ -96,5 +105,11 @@ const changeCurrentTabClass = (clickedIdx: number): boolean => {
 .current-tab {
   color: deepskyblue;
   border: 5px;
+}
+
+.disabled-tab {
+  pointer-events: none;
+  opacity: 0.5; /* 비활성화된 탭의 투명도를 조절할 수 있습니다. */
+  /* 여기에 추가적인 스타일을 적용할 수 있습니다. */
 }
 </style>
