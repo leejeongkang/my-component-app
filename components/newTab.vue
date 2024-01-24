@@ -49,8 +49,8 @@ const props = defineProps({
     default: INDEX,
   },
   disabledList: {
-    type: Array<String | number> || null,
-    default: null,
+    type: Array<String | Number>,
+    default: [],
   },
 });
 const emit = defineEmits<{ (e: "change", item: number | string): void }>();
