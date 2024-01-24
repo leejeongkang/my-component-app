@@ -84,9 +84,6 @@ const changeCurrentTabClass = (clickedIdx: number): boolean => {
 };
 
 const isDisabled = (value: string | number): boolean => {
-  if (!disabledList) {
-    return false;
-  }
   return disabledList.includes(value);
 };
 </script>
