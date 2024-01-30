@@ -25,13 +25,12 @@
         :hour-options="hourOptions"
         :minute-options="minuteOptions"
         :second-options="secondOptions"
-        :show-time-panel="showTimePanel"
         @pick="pick"
         @change="change"
       >
         <template #footer v-if="isPanelVisible()">
           <button class="mx-btn mx-btn-text" @click="toggleTimePanel">
-            {{ panelTitle ? "select date" : "select time" }}
+            {{ panelTitle ? "select time" : "select date" }}
           </button>
         </template>
       </DatePicker>
@@ -46,13 +45,14 @@ import type { PropType } from "vue";
 import dayjs from "dayjs";
 import _ from "lodash";
 
+const DATETIME = "datetime";
 const props = defineProps({
   modelValue: {
     type: [Array, String],
     default: "",
   },
   /**
-   * |datetime(x) -> dateTime(o)|year|month|time|week|
+   * |date|datetime|year|month|time|week|
    */
   type: {
     type: String,
@@ -118,9 +118,11 @@ const props = defineProps({
   },
   disabledDateRange: {
     type: Array as PropType<string[]>,
+    // [start, end]
   },
   disabledTimeRange: {
     type: Array as PropType<string[]>,
+    // [start, end]
   },
   titleFormat: {
     type: String,
@@ -152,7 +154,7 @@ const props = defineProps({
      * @param props
      */
     validator: (value, props) => {
-      return !(props.type !== "dateTime" && value);
+      return !(props.type !== DATETIME && value);
     },
   },
 });
@@ -200,7 +202,7 @@ if (props.showTimePanel) {
   }
 }
 const isPanelVisible = (): boolean => {
-  return props.showTimePanel && props.type === "dateTime";
+  return props.showTimePanel && props.type === DATETIME;
 };
 function toggleTimePanel() {
   panelTitle.value = !panelTitle.value;

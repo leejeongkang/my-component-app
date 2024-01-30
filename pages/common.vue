@@ -91,7 +91,6 @@
     :format="'MM'"
     :range="true"
   ></DatePicker>
-  {{ monthRange }}
 
   <h4>time</h4>
   <DatePicker
@@ -151,6 +150,15 @@
   ></DatePicker>
 
   <h4>Disabled</h4>
+  <!--  <DatePicker-->
+  <!--    v-model="nullData"-->
+  <!--    value-type="format"-->
+  <!--    type="datetime"-->
+  <!--    :format="'YYYY-MM-DD HH:mm:ss'"-->
+  <!--    :disabled-date-range="['2024-01-01', '2024-01-11']"-->
+  <!--    :disabled-time-range="['09:30:00', '12:00:00']"-->
+  <!--    :range="true"-->
+  <!--  ></DatePicker>-->
   <DatePicker
     v-model="date"
     value-type="format"
@@ -181,7 +189,7 @@
     :disabled-time-range="['09:30:00', '12:00:00']"
     :range="true"
   ></DatePicker>
-  <!-- TODO: datetime, datetime range, datetime disabled -->
+  <!-- TODO: datetime disabled -->
   <br />
   <br />
   <br />
