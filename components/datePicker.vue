@@ -167,30 +167,56 @@ const modelValue = computed(() => {
   return props.modelValue;
 });
 
-function setDay(value: string | Date | number | null, format: string) {
+function setDay(value: string | Date | number | null, format: string): string {
   return dayjs(value).format(format);
 }
-function disabledDate(val: Date) {
+function disabledDate(val: Date): boolean {
   const FORMAT = props.format;
   const date = setDay(val, FORMAT);
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    const startDate = setDay(start, FORMAT);
-    const endDate = setDay(end, FORMAT);
-    return startDate <= date && date <= endDate;
+    const startDate = start === null ? null : setDay(start, FORMAT);
+    const endDate = end === null ? null : setDay(end, FORMAT);
+
+    if (startDate === null && endDate !== null) {
+      return date <= endDate;
+    } else if (endDate === null && startDate !== null) {
+      return startDate <= date;
+    } else if (startDate !== null && endDate !== null) {
+      return startDate <= date && date <= endDate;
+    }
   }
   return false;
 }
-function disabledTime(val: Date) {
-  const FORMAT = props.format;
-  const date = setDay(val, FORMAT);
+function disabledTime(val: Date): boolean {
+  const format = props.type === DATETIME ? "HH:mm:ss" : props.format;
+  const date = setDay(val, format);
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-    return start <= date && date <= end;
+
+    if (start === null && end !== null) {
+      return date <= end;
+    } else if (end === null && start !== null) {
+      return start <= date;
+    } else if (start !== null && end !== null) {
+      return start <= date && date <= end;
+    }
   }
   return false;
 }
-
+// function calculateRange(
+//   date: string,
+//   start: string | null,
+//   end: string | null,
+// ) {
+//   if (start === null && end !== null) {
+//     return date <= end;
+//   } else if (end === null && start !== null) {
+//     return start <= date;
+//   } else if (start !== null && end !== null) {
+//     return start <= date && date <= end;
+//   }
+// }
 /**
  * props.type === "dateTime" 일 경우 true 할당 하는 방어 코드
  */
@@ -203,7 +229,7 @@ if (props.type === DATETIME) {
 const isPanelVisible = (): boolean => {
   return props.showTimePanel && props.type === DATETIME;
 };
-function toggleTimePanel() {
+function toggleTimePanel(): void {
   switchDateTimePanel.value = !switchDateTimePanel.value;
 }
 </script>

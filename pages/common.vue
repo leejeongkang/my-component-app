@@ -164,14 +164,14 @@
     value-type="format"
     type="date"
     :format="'YYYY-MM-DD'"
-    :disabled-date-range="['2024-01-01', '2024-01-11']"
+    :disabled-date-range="['2024-01-01', null]"
   ></DatePicker>
   <DatePicker
     v-model="time"
     value-type="format"
     type="time"
     :format="'HH:mm:ss'"
-    :disabled-time-range="['09:30:00', '12:00:00']"
+    :disabled-time-range="['09:30:00', null]"
   ></DatePicker>
   <DatePicker
     v-model="date"
@@ -186,10 +186,9 @@
     value-type="format"
     type="time"
     :format="'HH:mm:ss'"
-    :disabled-time-range="['09:30:00', '12:00:00']"
+    :disabled-time-range="[null, '12:00:00']"
     :range="true"
   ></DatePicker>
-  <!-- TODO: datetime disabled -->
   <br />
   <br />
   <br />
