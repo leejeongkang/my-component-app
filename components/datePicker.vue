@@ -25,12 +25,11 @@
         :hour-options="hourOptions"
         :minute-options="minuteOptions"
         :second-options="secondOptions"
-        @pick="pick"
-        @change="change"
+        :show-time-panel="switchDateTimePanel"
       >
         <template #footer v-if="isPanelVisible()">
           <button class="mx-btn mx-btn-text" @click="toggleTimePanel">
-            {{ panelTitle ? "select time" : "select date" }}
+            {{ switchDateTimePanel ? "select date" : "select time" }}
           </button>
         </template>
       </DatePicker>
@@ -195,23 +194,16 @@ function disabledTime(val: Date) {
 /**
  * props.type === "dateTime" 일 경우 true 할당 하는 방어 코드
  */
-const panelTitle = ref(false);
-if (props.showTimePanel) {
-  if (props.type === "dateTime") {
-    panelTitle.value = props.showTimePanel;
+const switchDateTimePanel = ref();
+if (props.type === DATETIME) {
+  if (props.showTimePanel) {
+    switchDateTimePanel.value = false;
   }
 }
 const isPanelVisible = (): boolean => {
   return props.showTimePanel && props.type === DATETIME;
 };
 function toggleTimePanel() {
-  panelTitle.value = !panelTitle.value;
-}
-
-function change(val) {
-  console.log(val);
-}
-function pick(val) {
-  console.log(val);
+  switchDateTimePanel.value = !switchDateTimePanel.value;
 }
 </script>
