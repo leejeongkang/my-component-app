@@ -116,11 +116,11 @@ const props = defineProps({
     default: false,
   },
   disabledDateRange: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<string[] | null[]>,
     // [start, end]
   },
   disabledTimeRange: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<string[] | null[]>,
     // [start, end]
   },
   titleFormat: {
