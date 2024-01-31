@@ -177,14 +177,7 @@ function disabledDate(val: Date): boolean {
     const [start, end] = props.disabledDateRange;
     const startDate = start === null ? null : setDay(start, FORMAT);
     const endDate = end === null ? null : setDay(end, FORMAT);
-
-    if (startDate === null && endDate !== null) {
-      return date <= endDate;
-    } else if (endDate === null && startDate !== null) {
-      return startDate <= date;
-    } else if (startDate !== null && endDate !== null) {
-      return startDate <= date && date <= endDate;
-    }
+    return calculateRange(date, startDate, endDate);
   }
   return false;
 }
@@ -193,30 +186,26 @@ function disabledTime(val: Date): boolean {
   const date = setDay(val, format);
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-
-    if (start === null && end !== null) {
-      return date <= end;
-    } else if (end === null && start !== null) {
-      return start <= date;
-    } else if (start !== null && end !== null) {
-      return start <= date && date <= end;
-    }
+    return calculateRange(date, start, end);
   }
   return false;
 }
-// function calculateRange(
-//   date: string,
-//   start: string | null,
-//   end: string | null,
-// ) {
-//   if (start === null && end !== null) {
-//     return date <= end;
-//   } else if (end === null && start !== null) {
-//     return start <= date;
-//   } else if (start !== null && end !== null) {
-//     return start <= date && date <= end;
-//   }
-// }
+function calculateRange(
+  date: string,
+  start: string | null,
+  end: string | null,
+): boolean {
+  if (start === null && end !== null) {
+    return date <= end;
+  } else if (end === null && start !== null) {
+    return start <= date;
+  } else if (start !== null && end !== null) {
+    return start <= date && date <= end;
+  } else {
+    console.error("Invalid parameters.");
+    return false;
+  }
+}
 /**
  * props.type === "dateTime" 일 경우 true 할당 하는 방어 코드
  */
