@@ -1,5 +1,5 @@
 <template>
-  <h4>confirm, confirm-text, placeholder</h4>
+  <h2>confirm, confirm-text, placeholder</h2>
   <DatePicker
     v-model="date"
     value-type="format"
@@ -8,7 +8,7 @@
     :confirm-text="'확인'"
     :placeholder="'입력해주세용'"
   ></DatePicker>
-  <h4>editable = false, clearable = false</h4>
+  <h2>editable = false, clearable = false</h2>
   <p>editable 이 input 에서만 수정 안되는거였음...</p>
   <DatePicker
     v-model:modelValue="date2"
@@ -18,7 +18,7 @@
     :clearable="false"
     :editable="false"
   ></DatePicker>
-  <h4>Disabled</h4>
+  <h2>Disabled</h2>
   <DatePicker
     v-model:modelValue="date"
     :type="'date'"
@@ -26,13 +26,13 @@
     :disabled="true"
   ></DatePicker>
 
-  <h4>date =>? Range</h4>
+  <h2>Range</h2>
   <DatePicker
     v-model:modelValue="range1"
     :format="'YYYY-MM-DD'"
     :range="true"
   ></DatePicker>
-  <h4>separator, confirm</h4>
+  <h2>separator, confirm</h2>
   <DatePicker
     v-model="range2"
     value-type="format"
@@ -42,7 +42,8 @@
     :separator="'~~~~~~~~~'"
   ></DatePicker>
 
-  <h4>datetime</h4>
+  <h2>datetime</h2>
+  <p>v-model에 null 넣으면 placeholder</p>
   <DatePicker
     v-model="nullData"
     :type="'datetime'"
@@ -59,7 +60,7 @@
     :range="true"
   ></DatePicker>
 
-  <h4>Year</h4>
+  <h2>Year</h2>
   <DatePicker
     v-model="year"
     value-type="YYYY"
@@ -76,7 +77,7 @@
     :range="true"
   ></DatePicker>
 
-  <h4>month</h4>
+  <h2>month</h2>
   <DatePicker
     v-model="month"
     value-type="MM"
@@ -92,7 +93,7 @@
     :range="true"
   ></DatePicker>
 
-  <h4>time</h4>
+  <h2>time</h2>
   <DatePicker
     v-model="time"
     value-type="format"
@@ -108,7 +109,7 @@
     :range="true"
   ></DatePicker>
 
-  <h4>Multiple</h4>
+  <h2>Multiple</h2>
   <p>multiple 설정할 경우 separator 알맞게(",") 설정해줘야 함!</p>
   <DatePicker
     v-model="multiple"
@@ -119,7 +120,7 @@
     :separator="','"
   ></DatePicker>
 
-  <h4>Time options (Hour, Minute, Second Options)</h4>
+  <h2>Time options (Hour, Minute, Second Options)</h2>
   <DatePicker
     v-model="options"
     value-type="format"
@@ -131,9 +132,9 @@
     :second-options="[0, 20, 40]"
   ></DatePicker>
 
-  <h4>
+  <h2>
     타입이 datetime 일때만 show-time-panel이 보인다. 아무리 true 줘봤자 안됌!
-  </h4>
+  </h2>
   <DatePicker
     v-model="date"
     value-type="format"
@@ -149,7 +150,8 @@
     :show-time-panel="true"
   ></DatePicker>
 
-  <h4>Disabled</h4>
+  <h2>Disabled</h2>
+  <p>datetime 일때 date, time 둘 다 disabled range 적용</p>
   <DatePicker
     v-model="nullData"
     value-type="format"

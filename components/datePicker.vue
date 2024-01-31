@@ -25,11 +25,11 @@
         :hour-options="hourOptions"
         :minute-options="minuteOptions"
         :second-options="secondOptions"
-        :show-time-panel="switchDateTimePanel"
+        :show-time-panel="dateTimePanel"
       >
         <template #footer v-if="isPanelVisible()">
-          <button class="mx-btn mx-btn-text" @click="toggleTimePanel">
-            {{ switchDateTimePanel ? "select date" : "select time" }}
+          <button class="mx-btn mx-btn-text" @click="switchDateTimePanel">
+            {{ dateTimePanel ? "select date" : "select time" }}
           </button>
         </template>
       </DatePicker>
@@ -145,13 +145,14 @@ const props = defineProps({
   secondOptions: {
     type: Array as PropType<number[]>,
   },
+  /**
+   * 타입에 맞지 않게 설정 되면 콘솔 워닝
+   * props.type = "datetime" 일 경우, true
+   * @param value
+   * @param props
+   */
   showTimePanel: {
     type: Boolean,
-    /**
-     * 타입에 맞지 않게 설정 되면 콘솔 워닝
-     * @param value
-     * @param props
-     */
     validator: (value, props) => {
       return !(props.type !== DATETIME && value);
     },
@@ -207,18 +208,18 @@ function calculateRange(
   }
 }
 /**
- * props.type === "dateTime" 일 경우 true 할당 하는 방어 코드
+ * props.type === "dateTime" 일 경우 값 할당 하는 방어 코드
  */
-const switchDateTimePanel = ref();
+const dateTimePanel = ref();
 if (props.type === DATETIME) {
   if (props.showTimePanel) {
-    switchDateTimePanel.value = false;
+    dateTimePanel.value = false;
   }
 }
 const isPanelVisible = (): boolean => {
   return props.showTimePanel && props.type === DATETIME;
 };
-function toggleTimePanel(): void {
-  switchDateTimePanel.value = !switchDateTimePanel.value;
+function switchDateTimePanel(): void {
+  dateTimePanel.value = !dateTimePanel.value;
 }
 </script>
