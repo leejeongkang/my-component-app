@@ -162,6 +162,14 @@
     :range="true"
   ></DatePicker>
   <DatePicker
+    v-model="nullData"
+    value-type="format"
+    type="datetime"
+    :format="'YYYY-MM-DD HH:mm:ss'"
+    :disabled-date-range="['2024-01-01', '2024-01-11']"
+    :disabled-time-range="['09:30:00', '12:00:00']"
+  ></DatePicker>
+  <DatePicker
     v-model="date"
     value-type="format"
     type="date"

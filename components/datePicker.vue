@@ -168,25 +168,55 @@ const modelValue = computed(() => {
   return props.modelValue;
 });
 
-function setDay(value: string | Date | number | null, format: string): string {
-  return dayjs(value).format(format);
+function setDay(
+  value: string | Date | number | null,
+  format: string,
+): string | null {
+  if (!(value instanceof Date) && (value === null || _.isEmpty(value))) {
+    console.error("Invalid parameters.");
+    return null;
+  } else {
+    return dayjs(value).format(format);
+  }
 }
 function disabledDate(val: Date): boolean {
+  if (_.isNil(props.disabledDateRange)) {
+    return false;
+  }
   const FORMAT = props.format;
-  const date = setDay(val, FORMAT);
+  const date: string | null = setDay(val, FORMAT);
+  if (!date) {
+    console.error("Date is null.");
+    return false;
+  }
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    const startDate = start === null ? null : setDay(start, FORMAT);
-    const endDate = end === null ? null : setDay(end, FORMAT);
+    if (start === undefined || end === undefined) {
+      console.error("Invalid props disabledDateRange");
+      return false;
+    }
+    const startDate = setDay(start, FORMAT);
+    const endDate = setDay(end, FORMAT);
     return calculateRange(date, startDate, endDate);
   }
   return false;
 }
 function disabledTime(val: Date): boolean {
+  if (_.isNil(props.disabledTimeRange)) {
+    return false;
+  }
   const format = props.type === DATETIME ? "HH:mm:ss" : props.format;
-  const date = setDay(val, format);
+  const date: string | null = setDay(val, format);
+  if (!date) {
+    console.error("Date is null.");
+    return false;
+  }
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
+    if (start === undefined || end === undefined) {
+      console.error("Invalid props disabledTimeRange");
+      return false;
+    }
     return calculateRange(date, start, end);
   }
   return false;
