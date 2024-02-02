@@ -213,7 +213,12 @@ function disabledTime(val: Date): boolean {
   }
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-    if (start === undefined || end === undefined) {
+    if (
+      start === undefined ||
+      end === undefined ||
+      start === "" ||
+      end === ""
+    ) {
       console.error("Invalid props disabledTimeRange");
       return false;
     }
