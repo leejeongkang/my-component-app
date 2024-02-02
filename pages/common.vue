@@ -181,7 +181,7 @@
     value-type="format"
     type="time"
     :format="'HH:mm:ss'"
-    :disabled-time-range="['09:30:00', null]"
+    :disabled-time-range="[null, '09:30:00', null]"
   ></DatePicker>
   <DatePicker
     v-model="date"

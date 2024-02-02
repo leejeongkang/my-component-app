@@ -43,8 +43,15 @@ import "vue-datepicker-next/index.css";
 import type { PropType } from "vue";
 import dayjs from "dayjs";
 import _ from "lodash";
+import isBetween from "dayjs/plugin/isBetween";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const DATETIME = "datetime";
+const TIME = "time";
 const props = defineProps({
   modelValue: {
     type: [Array, String],
@@ -179,17 +186,13 @@ function setDay(
     return dayjs(value).format(format);
   }
 }
-function disabledDate(val: Date): boolean {
+function disabledDate(date: Date): boolean {
   if (_.isNil(props.disabledDateRange)) {
     return false;
   }
-  const FORMAT = props.format;
-  const date: string | null = setDay(val, FORMAT);
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    const startDate = setDay(start, FORMAT);
-    const endDate = setDay(end, FORMAT);
-    return calculateRange(date, startDate, endDate);
+    return calculateRange(date, start, end, DATETIME);
   }
   return false;
 }
@@ -201,12 +204,12 @@ function disabledTime(val: Date): boolean {
   const date: string | null = setDay(val, format);
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-    return calculateRange(date, start, end);
+    return calculateRange(date, start, end, TIME);
   }
   return false;
 }
 function validateDate(
-  date: string | null,
+  date: Date | string | null,
   start: string | null | undefined,
   end: string | null | undefined,
 ): boolean {
@@ -229,19 +232,26 @@ function validateDate(
  * 이 때 Non-null assertion operator인 !를 사용하여 "이 변수는 null이 아님"이라고 알려줍니다
  */
 function calculateRange(
-  date: string | null,
+  date: Date | string | null,
   start: string | null,
   end: string | null,
+  type: string,
 ): boolean {
   if (!validateDate(date, start, end)) {
     return false;
   }
   if (start === null && end !== null) {
-    return date! <= end;
+    return type === DATETIME
+      ? dayjs(date!).isSameOrBefore(dayjs(end))
+      : date! <= end;
   } else if (end === null && start !== null) {
-    return start <= date!;
+    return type === DATETIME
+      ? dayjs(date!).isSameOrAfter(start)
+      : start <= date!;
   } else if (start !== null && end !== null) {
-    return start <= date! && date! <= end;
+    return type === DATETIME
+      ? dayjs(date!).isBetween(start, end)
+      : start <= date! && date! <= end;
   } else {
     console.error("Invalid parameters.");
     return false;
