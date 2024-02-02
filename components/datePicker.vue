@@ -191,7 +191,12 @@ function disabledDate(val: Date): boolean {
   }
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    if (start === undefined || end === undefined) {
+    if (
+      start === undefined ||
+      end === undefined ||
+      start === "" ||
+      end === ""
+    ) {
       console.error("Invalid props disabledDateRange");
       return false;
     }
