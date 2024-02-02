@@ -185,21 +185,8 @@ function disabledDate(val: Date): boolean {
   }
   const FORMAT = props.format;
   const date: string | null = setDay(val, FORMAT);
-  if (!date) {
-    console.error("Date is null.");
-    return false;
-  }
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    if (
-      start === undefined ||
-      end === undefined ||
-      start === "" ||
-      end === ""
-    ) {
-      console.error("Invalid props disabledDateRange");
-      return false;
-    }
     const startDate = setDay(start, FORMAT);
     const endDate = setDay(end, FORMAT);
     return calculateRange(date, startDate, endDate);
@@ -212,36 +199,49 @@ function disabledTime(val: Date): boolean {
   }
   const format = props.type === DATETIME ? "HH:mm:ss" : props.format;
   const date: string | null = setDay(val, format);
-  if (!date) {
-    console.error("Date is null.");
-    return false;
-  }
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-    if (
-      start === undefined ||
-      end === undefined ||
-      start === "" ||
-      end === ""
-    ) {
-      console.error("Invalid props disabledTimeRange");
-      return false;
-    }
     return calculateRange(date, start, end);
   }
   return false;
 }
+function validateDate(
+  date: string | null,
+  start: string | null | undefined,
+  end: string | null | undefined,
+): boolean {
+  if (!date) {
+    console.error("Date is null.");
+    return false;
+  }
+  if (start === undefined || end === undefined || start === "" || end === "") {
+    console.error("Invalid props disabledTimeRange");
+    return false;
+  }
+  return true;
+}
+/**
+ * NOTE: date! 의미
+ * Non-null assertion operator라고 불리며, TypeScript에서 사용되는 연산자입니다.
+ * 이 연산자는 특정 변수 또는 속성이 null 또는 undefined가 아니라고 확신할 때 사용
+ * TypeScript는 null 가능성을 고려하여 컴파일러 오류를 방지하기 위해 해당 변수를 사용하기 전에 null 체크를 강제합니다.
+ * 그러나 때로는 프로그래머가 null 체크를 이미 수행했다고 확신할 때가 있습니다.
+ * 이 때 Non-null assertion operator인 !를 사용하여 "이 변수는 null이 아님"이라고 알려줍니다
+ */
 function calculateRange(
-  date: string,
+  date: string | null,
   start: string | null,
   end: string | null,
 ): boolean {
+  if (!validateDate(date, start, end)) {
+    return false;
+  }
   if (start === null && end !== null) {
-    return date <= end;
+    return date! <= end;
   } else if (end === null && start !== null) {
-    return start <= date;
+    return start <= date!;
   } else if (start !== null && end !== null) {
-    return start <= date && date <= end;
+    return start <= date! && date! <= end;
   } else {
     console.error("Invalid parameters.");
     return false;
