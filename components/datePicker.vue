@@ -33,6 +33,7 @@
           </button>
         </template>
       </DatePicker>
+      <div>{{ modelValue }}</div>
     </ClientOnly>
   </div>
 </template>
@@ -81,14 +82,8 @@ const props = defineProps({
   },
   defaultValue: {
     type: Date,
-    default: new Date(),
-  },
-  /**
-   * true 일 경우 defaultValue 적용
-   */
-  setDefaultValue: {
-    type: Boolean,
-    default: false,
+    default: "2024-01-31",
+    // 오늘 내일
   },
   lang: {
     type: String,
@@ -166,14 +161,6 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:modelValue"]);
-const modelValue = computed(() => {
-  if (!props.modelValue || _.isEmpty(props.modelValue)) {
-    if (props.setDefaultValue) {
-      return setDay(props.defaultValue, props.format);
-    }
-  }
-  return props.modelValue;
-});
 
 function setDay(
   value: string | Date | number | null,
@@ -192,19 +179,24 @@ function disabledDate(date: Date): boolean {
   }
   if (props.disabledDateRange) {
     const [start, end] = props.disabledDateRange;
-    return calculateRange(date, start, end, DATETIME);
+    return calculateRange(date, start, end);
   }
   return false;
 }
-function disabledTime(val: Date): boolean {
+function disabledTime(date: Date): boolean {
   if (_.isNil(props.disabledTimeRange)) {
     return false;
   }
-  const format = props.type === DATETIME ? "HH:mm:ss" : props.format;
-  const date: string | null = setDay(val, format);
   if (props.disabledTimeRange) {
     const [start, end] = props.disabledTimeRange;
-    return calculateRange(date, start, end, TIME);
+    if (!validateDate(date, start, end)) {
+      return false;
+    }
+    let startDateTime =
+      start === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${start}`;
+    let endDateTime =
+      end === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${end}`;
+    return calculateRange(date, startDateTime, endDateTime);
   }
   return false;
 }
@@ -235,23 +227,16 @@ function calculateRange(
   date: Date | string | null,
   start: string | null,
   end: string | null,
-  type: string,
 ): boolean {
   if (!validateDate(date, start, end)) {
     return false;
   }
   if (start === null && end !== null) {
-    return type === DATETIME
-      ? dayjs(date!).isSameOrBefore(dayjs(end))
-      : date! <= end;
+    return dayjs(date).isSameOrBefore(end);
   } else if (end === null && start !== null) {
-    return type === DATETIME
-      ? dayjs(date!).isSameOrAfter(start)
-      : start <= date!;
+    return dayjs(date).isSameOrAfter(start);
   } else if (start !== null && end !== null) {
-    return type === DATETIME
-      ? dayjs(date!).isBetween(start, end)
-      : start <= date! && date! <= end;
+    return dayjs(date).isBetween(start, end);
   } else {
     console.error("Invalid parameters.");
     return false;
