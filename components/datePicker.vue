@@ -9,7 +9,6 @@
         :format="format"
         :formatter="formatter"
         :value-type="valueType"
-        :default-value="defaultValue"
         :lang="lang"
         :placeholder="placeholder"
         :editable="editable"
@@ -33,7 +32,6 @@
           </button>
         </template>
       </DatePicker>
-      <div>{{ modelValue }}</div>
     </ClientOnly>
   </div>
 </template>
@@ -42,17 +40,10 @@
 import DatePicker from "vue-datepicker-next";
 import "vue-datepicker-next/index.css";
 import type { PropType } from "vue";
-import dayjs from "dayjs";
 import _ from "lodash";
-import isBetween from "dayjs/plugin/isBetween";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-dayjs.extend(isBetween);
-dayjs.extend(isSameOrBefore);
-dayjs.extend(isSameOrAfter);
+const dayjs = useDayjs();
 
 const DATETIME = "datetime";
-const TIME = "time";
 const props = defineProps({
   modelValue: {
     type: [Array, String],
@@ -79,11 +70,6 @@ const props = defineProps({
   valueType: {
     type: String,
     default: "format",
-  },
-  defaultValue: {
-    type: Date,
-    default: "2024-01-31",
-    // 오늘 내일
   },
   lang: {
     type: String,
