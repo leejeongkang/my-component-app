@@ -158,31 +158,23 @@ function disabledDate(date: Date): boolean {
   return false;
 }
 function disabledTime(date: Date): boolean {
-  if (_.isNil(props.disabledTimeRange)) {
+  if (_.isNil(props.disabledTimeRange) || _.isEmpty(props.disabledTimeRange)) {
     return false;
   }
-  if (props.disabledTimeRange) {
-    const [start, end] = props.disabledTimeRange;
-    if (!validateDate(date, start, end)) {
-      return false;
-    }
-    let startDateTime =
-      start === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${start}`;
-    let endDateTime =
-      end === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${end}`;
-    return calculateRange(date, startDateTime, endDateTime);
+  const [start, end] = props.disabledTimeRange!;
+  if (!validateDate(start, end)) {
+    return false;
   }
-  return false;
+  let startDateTime =
+    start === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${start}`;
+  let endDateTime =
+    end === null ? null : `${dayjs(date).format("YYYY-MM-DD")} ${end}`;
+  return calculateRange(date, startDateTime, endDateTime);
 }
 function validateDate(
-  date: Date | string | null,
   start: string | null | undefined,
   end: string | null | undefined,
 ): boolean {
-  if (!date) {
-    console.error("Date is null.");
-    return false;
-  }
   if (start === undefined || end === undefined || start === "" || end === "") {
     console.error("Invalid props disabledTimeRange");
     return false;
@@ -198,11 +190,11 @@ function validateDate(
  * 이 때 Non-null assertion operator인 !를 사용하여 "이 변수는 null이 아님"이라고 알려줍니다
  */
 function calculateRange(
-  date: Date | string | null,
+  date: Date,
   start: string | null,
   end: string | null,
 ): boolean {
-  if (!validateDate(date, start, end)) {
+  if (!validateDate(start, end)) {
     return false;
   }
   if (start === null && end !== null) {
