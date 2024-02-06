@@ -147,18 +147,6 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:modelValue"]);
-
-function setDay(
-  value: string | Date | number | null,
-  format: string,
-): string | null {
-  if (!(value instanceof Date) && (value === null || _.isEmpty(value))) {
-    console.error("Invalid parameters.");
-    return null;
-  } else {
-    return dayjs(value).format(format);
-  }
-}
 function disabledDate(date: Date): boolean {
   if (_.isNil(props.disabledDateRange)) {
     return false;
