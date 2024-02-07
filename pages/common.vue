@@ -1,4 +1,24 @@
 <template>
+  <button @click="clickModal">클릭</button>
+  <modal
+    :modal-id="'modal1'"
+    :hide-overlay="false"
+    :overlay-transition="'vfm-slide-down'"
+    :content-transition="'vfm-slide-right'"
+    :esc-to-close="true"
+  >
+    <template v-slot:head><span>header</span></template>
+    <template v-slot:body>
+      <span>body</span>
+      <span>모달테스트</span>
+      <span>모달테스트</span>
+      <span>모달테스트</span>
+    </template>
+    <template v-slot:foot>
+      <span>footer</span>
+      <button class="button" @click="">Confirm</button>
+    </template>
+  </modal>
   <h2>confirm, confirm-text, placeholder</h2>
   <DatePicker
     v-model="date"
@@ -135,13 +155,13 @@
   <h2>
     타입이 datetime 일때만 show-time-panel이 보인다. 아무리 true 줘봤자 안됌!
   </h2>
-  <DatePicker
-    v-model="date"
-    value-type="format"
-    type="date"
-    :format="'YYYY-MM-DD'"
-    :show-time-panel="true"
-  ></DatePicker>
+  <!--  <DatePicker-->
+  <!--    v-model="date"-->
+  <!--    value-type="format"-->
+  <!--    type="date"-->
+  <!--    :format="'YYYY-MM-DD'"-->
+  <!--    :show-time-panel="true"-->
+  <!--  ></DatePicker>-->
   <DatePicker
     v-model="dateTime"
     value-type="format"
@@ -224,6 +244,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useNuxtApp } from "nuxt/app";
+const { $vfm } = useNuxtApp();
+
+function clickModal() {
+  $vfm.open("modal1");
+}
 const nullData = ref(null);
 const date = ref("2024-01-26");
 const date2 = ref("24.01.26");
