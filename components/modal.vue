@@ -1,43 +1,38 @@
 <template>
-  <ClientOnly>
-    <vue-final-modal
-      class="custom-modal"
-      :content-class="contentClass"
-      :modal-id="modalId"
-      :display-directive="displayDirective"
-      :hide-overlay="hideOverlay"
-      :overlay-transition="overlayTransition"
-      :content-transition="contentTransition"
-      :overlay-class="overlayClass"
-      :click-to-close="clickToClose"
-      :esc-to-close="escToClose"
-      :background="background"
-      :lock-scroll="lockScroll"
-      :swipe-to-close="swipeToClose"
-      @clickOutside="$emit('click-outside')"
-      @before-open="$emit('before-open')"
-      @opened="$emit('open')"
-      @before-close="$emit('before-close')"
-      @closed="$emit('closed')"
-    >
-      <header class="modal-header">
-        <slot name="head"> </slot>
-      </header>
-      <body class="modal-body">
-        <slot name="body"></slot>
-      </body>
-      <footer class="modal-footer">
-        <slot name="foot"> </slot>
-      </footer>
-    </vue-final-modal>
-  </ClientOnly>
+  <vue-final-modal
+    class="custom-modal"
+    :content-class="contentClass"
+    :modal-id="modalId"
+    :display-directive="displayDirective"
+    :hide-overlay="hideOverlay"
+    :overlay-transition="overlayTransition"
+    :content-transition="contentTransition"
+    :overlay-class="overlayClass"
+    :click-to-close="clickToClose"
+    :esc-to-close="escToClose"
+    :background="background"
+    :lock-scroll="lockScroll"
+    :swipe-to-close="swipeToClose"
+    @clickOutside="$emit('click-outside')"
+    @before-open="$emit('before-open')"
+    @opened="$emit('open')"
+    @before-close="$emit('before-close')"
+    @closed="$emit('closed')"
+  >
+    <header class="modal-header">
+      <slot name="head"> </slot>
+    </header>
+    <body class="modal-body">
+      <slot name="body"></slot>
+    </body>
+    <footer class="modal-footer">
+      <slot name="foot"> </slot>
+    </footer>
+  </vue-final-modal>
 </template>
 
 <script setup lang="ts">
 import { VueFinalModal } from "vue-final-modal";
-import { useNuxtApp } from "nuxt/app";
-const { $vfm } = useNuxtApp();
-import "vue-final-modal/style.css";
 import type { PropType } from "vue";
 
 const props = defineProps({
