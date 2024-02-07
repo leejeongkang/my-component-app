@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     // your other plugins...
     { src: "~/plugins/vue-datepicker", mode: "client" }, // 파일명 및 경로는 실제로 사용하는 파일에 맞게 수정
     { src: "~/plugins/vue-final-modal", mode: "client" },
+    { src: "~/plugins/vue-drag-resize", mode: "client" },
   ],
   modules: ["dayjs-nuxt"],
   dayjs: {

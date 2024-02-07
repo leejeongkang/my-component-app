@@ -1,6 +1,6 @@
 <template>
-  <vue-final-modal
-    class="custom-modal"
+  <VueFinalModal
+    :class="modalClass"
     :content-class="contentClass"
     :modal-id="modalId"
     :display-directive="displayDirective"
@@ -19,16 +19,40 @@
     @before-close="$emit('before-close')"
     @closed="$emit('closed')"
   >
-    <header class="modal-header">
-      <slot name="head"> </slot>
-    </header>
-    <body class="modal-body">
-      <slot name="body"></slot>
-    </body>
-    <footer class="modal-footer">
-      <slot name="foot"> </slot>
-    </footer>
-  </vue-final-modal>
+    <ClientOnly v-if="dragAndResize">
+      <VueDragResize
+        :is-active="true"
+        :w="200"
+        :h="200"
+        class="bg-100"
+        @resizing="dragResize"
+        @dragging="dragResize"
+      >
+        <header class="modal-header">
+          <slot name="head"> </slot>
+        </header>
+        <body class="modal-body">
+          <slot name="body"></slot>
+        </body>
+        <footer class="modal-footer">
+          <slot name="foot"> </slot>
+        </footer>
+        <p>{{ elementPosition.top }} х {{ elementPosition.left }}</p>
+        <p>{{ elementPosition.width }} х {{ elementPosition.height }}</p>
+      </VueDragResize>
+    </ClientOnly>
+    <template v-if="!dragAndResize">
+      <header class="modal-header">
+        <slot name="head"> </slot>
+      </header>
+      <body class="modal-body">
+        <slot name="body"></slot>
+      </body>
+      <footer class="modal-footer">
+        <slot name="foot"> </slot>
+      </footer>
+    </template>
+  </VueFinalModal>
 </template>
 
 <script setup lang="ts">
@@ -38,6 +62,10 @@ import type { PropType } from "vue";
 const props = defineProps({
   modalId: {
     type: String,
+  },
+  modalClass: {
+    type: String,
+    default: "custom-modal",
   },
   displayDirective: {
     type: String as PropType<"if" | "show" | "visible">,
@@ -93,6 +121,10 @@ const props = defineProps({
     type: String as PropType<"none" | "up" | "right" | "down" | "left">,
     default: "none",
   },
+  dragAndResize: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
 });
 const emit = defineEmits<{
   (e: "click-outside"): void;
@@ -101,6 +133,25 @@ const emit = defineEmits<{
   (e: "before-close"): void;
   (e: "closed"): void;
 }>();
+interface Rect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+const elementPosition: Rect = reactive({
+  width: 0,
+  height: 0,
+  top: 0,
+  left: 0,
+});
+function dragResize(newRect: Rect) {
+  console.log(newRect);
+  elementPosition.width = newRect.width;
+  elementPosition.height = newRect.height;
+  elementPosition.top = newRect.top;
+  elementPosition.left = newRect.left;
+}
 </script>
 
 <style>

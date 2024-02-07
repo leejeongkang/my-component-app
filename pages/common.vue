@@ -1,11 +1,16 @@
 <template>
   <button @click="clickModal">클릭</button>
   <modal
+    :content-class="''"
+    :background="'interactive'"
+    :display-directive="'show'"
+    :drag-and-resize="true"
     :modal-id="'modal1'"
     :hide-overlay="false"
     :overlay-transition="'vfm-slide-down'"
     :content-transition="'vfm-slide-right'"
     :esc-to-close="true"
+    :click-to-close="true"
   >
     <template v-slot:head><span>header</span></template>
     <template v-slot:body>
