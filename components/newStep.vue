@@ -28,6 +28,7 @@
 <script lang="ts" setup>
 import { defineProps, ref } from "vue";
 import { ComparisonOperator } from "@/components/types/comparisonOperator";
+import { PropType } from "vue/dist/vue";
 const INDEX = "index";
 const VALUE = "value";
 
@@ -55,18 +56,12 @@ const props = defineProps({
     type: [Number, String],
     default: 0,
   },
-  /**
-   * index || value
-   */
   currentItemType: {
-    type: String,
+    type: String as PropType<"index" | "value">,
     default: INDEX,
   },
-  /**
-   * equal | greater
-   */
   comparison: {
-    type: String,
+    type: String as PropType<"equal" | "greater">,
     default: ComparisonOperator.EQUAL,
   },
 });
