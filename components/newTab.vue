@@ -19,6 +19,7 @@
 <script lang="ts" setup>
 // defineProps, emit 찾아보기
 import { ref } from "vue";
+import type { PropType } from "vue";
 const INDEX = "index";
 const VALUE = "value";
 const props = defineProps({
@@ -41,15 +42,12 @@ const props = defineProps({
     type: [Number, String],
     default: 0,
   },
-  /**
-   * index || value
-   */
   currentItemType: {
-    type: String,
+    type: String as PropType<"index" | "value">,
     default: INDEX,
   },
   disabledList: {
-    type: Array<String | Number>,
+    type: Array as PropType<string[] | null[]>,
     default: [],
   },
 });
