@@ -22,8 +22,8 @@
     <ClientOnly v-if="dragAndResize">
       <VueDragResize
         :is-active="true"
-        :w="200"
-        :h="200"
+        :w="elementPosition.width"
+        :h="elementPosition.height"
         class="bg-100"
         @resizing="dragResize"
         @dragging="dragResize"
@@ -140,13 +140,12 @@ interface Rect {
   height: number;
 }
 const elementPosition: Rect = reactive({
-  width: 0,
-  height: 0,
+  width: 300,
+  height: 300,
   top: 0,
   left: 0,
 });
 function dragResize(newRect: Rect) {
-  console.log(newRect);
   elementPosition.width = newRect.width;
   elementPosition.height = newRect.height;
   elementPosition.top = newRect.top;
