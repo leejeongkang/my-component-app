@@ -125,6 +125,15 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false,
   },
+  modalElementPosition: {
+    type: Object as PropType<Rect>,
+    default: {
+      width: 300,
+      height: 300,
+      top: 0,
+      left: 0,
+    },
+  },
 });
 const emit = defineEmits<{
   (e: "click-outside"): void;
@@ -145,6 +154,10 @@ const elementPosition: Rect = reactive({
   top: 0,
   left: 0,
 });
+
+if (props.modalElementPosition) {
+  Object.assign(props.modalElementPosition, elementPosition);
+}
 function dragResize(newRect: Rect) {
   elementPosition.width = newRect.width;
   elementPosition.height = newRect.height;
