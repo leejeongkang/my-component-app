@@ -1,11 +1,29 @@
 <template>
-  <button @click="clickModal">클릭</button>
+  <button @click="clickModal">모달 예시 1번 클릭</button>
+  <button @click="clickModal2">모달 예시 2번 클릭</button>
+  <modal
+    :modal-id="'modal1'"
+    :hide-overlay="false"
+    :overlay-transition="'vfm-slide-down'"
+    :content-transition="'vfm-slide-right'"
+    :esc-to-close="true"
+  >
+    <template v-slot:head><span>header</span></template>
+    <template v-slot:body>
+      <span>body</span>
+      <span>기본 모달입니다.</span>
+    </template>
+    <template v-slot:foot>
+      <span>footer</span>
+      <button class="button" @click="">Confirm</button>
+    </template>
+  </modal>
   <modal
     :content-class="''"
     :background="'interactive'"
     :display-directive="'show'"
     :drag-and-resize="true"
-    :modal-id="'modal1'"
+    :modal-id="'modal2'"
     :hide-overlay="false"
     :overlay-transition="'vfm-slide-down'"
     :content-transition="'vfm-slide-right'"
@@ -14,10 +32,9 @@
   >
     <template v-slot:head><span>header</span></template>
     <template v-slot:body>
-      <span>body</span>
-      <span>모달테스트</span>
-      <span>모달테스트</span>
-      <span>모달테스트</span>
+      <span>body</span><br />
+      <span>드래그 되는 모달입니다.</span> <br />
+      <span>리사이즈도 되는 모달입니다.</span>
     </template>
     <template v-slot:foot>
       <span>footer</span>
@@ -254,6 +271,9 @@ const { $vfm } = useNuxtApp();
 
 function clickModal() {
   $vfm.open("modal1");
+}
+function clickModal2() {
+  $vfm.open("modal2");
 }
 const nullData = ref(null);
 const date = ref("2024-01-26");
