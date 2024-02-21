@@ -6,7 +6,7 @@
       :model="treeData"
       @click="onClick"
       @changeName="onChangeName"
-      @delete-node="onDel"
+      @deleteNode="onDeleteNode"
       @addNode="onAddNode"
       default-tree-node-name="New node"
       default-leaf-node-name="New leaf"
@@ -55,9 +55,10 @@
       <!--        >-->
       <!--      </template>-->
     </VueTreeList>
-    <!--    <pre>-->
-    <!--      {{ treeData }}-->
-    <!--    </pre>-->
+    <pre>
+          {{ treeData }}
+        </pre
+    >
   </div>
 </template>
 
@@ -123,7 +124,7 @@ function onChangeName(params) {
 function onClick(val: any) {
   console.log(val);
 }
-function onDel(node: any) {
+function onDeleteNode(node: any) {
   console.log("on Delete");
   node.value.remove();
 }
