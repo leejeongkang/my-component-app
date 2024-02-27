@@ -47,7 +47,7 @@ const props = defineProps({
     default: INDEX,
   },
   disabledList: {
-    type: Array as PropType<string[] | null[]>,
+    type: Array as PropType<string[] | number[] | null[]>,
     default: [],
   },
 });

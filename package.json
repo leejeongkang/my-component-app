@@ -20,6 +20,8 @@
     "lodash": "^4.17.21",
     "vue-datepicker-next": "^1.0.3",
     "vue-final-modal": "^4.5.3",
-    "vue3-drag-resize": "^2.0.5"
+    "vue-tree-list-vue3": "^1.0.4",
+    "vue3-drag-resize": "^2.0.5",
+    "vue3-tree-vue": "^2.0.9"
   }
 }
