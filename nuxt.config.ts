@@ -10,7 +10,10 @@ export default defineNuxtConfig({
     { src: "~/plugins/vue-final-modal", mode: "client" },
     { src: "~/plugins/vue-drag-resize", mode: "client" },
   ],
-  modules: ["dayjs-nuxt"],
+  modules: ["dayjs-nuxt", "@nuxtjs/strapi"],
+  strapi: {
+    url: "http://localhost:1337",
+  },
   dayjs: {
     plugins: ["isBetween", "isSameOrBefore", "isSameOrAfter"],
   },
