@@ -1,68 +1,163 @@
 <template>
   <div>
     <h1>API TEST- module 사용</h1>
+    <div>
+      <input v-model="keyword" />
+      <button @click="searchBoard">검색</button>
+    </div>
     <table border="1">
       <tr>
+        <th>ID</th>
         <th>제목</th>
         <th>내용</th>
         <th>작성자</th>
+        <th>댓글</th>
         <th>작성 시간</th>
         <th>수정 시간</th>
         <th>삭제</th>
       </tr>
       <tbody>
-        <tr v-for="board in boards?.data" :key="board.id">
+        <tr v-for="board in boards" :key="board.id">
+          <td>{{ board.id }}</td>
           <td @click="$router.push(`${$route.path}/${board.id}`)">
             {{ board.attributes.title }}
           </td>
           <td>{{ board.attributes.content }}</td>
           <td>{{ board.attributes.user }}</td>
+          <td>
+            {{
+              board.attributes.comments.data.length > 0
+                ? board.attributes.comments.data.length
+                : ""
+            }}
+          </td>
           <td>{{ board.attributes.createdAt }}</td>
           <td>{{ board.attributes.updatedAt }}</td>
           <td>
             <button style="flex: 1" @click="deleteBoard(board.id)">삭제</button>
           </td>
         </tr>
-        <tr>
-          <td><input v-model="newBoard.title" /></td>
-          <td><input v-model="newBoard.content" /></td>
-          <td><input v-model="newBoard.user" /></td>
-          <td><button @click="addBoard">새글 추가</button></td>
-        </tr>
       </tbody>
     </table>
+    <Pagination
+      :total-elements="pagination.total"
+      :page-size="pagination.pageSize"
+      :current-page="pagination.page - 1"
+      @click="changePage"
+    ></Pagination>
+
+    <label>제목:</label><br />
+    <input v-model="newBoard.title" /><br /><br />
+    <label>내용:</label><br />
+    <textarea rows="4" cols="50" v-model="newBoard.content"></textarea
+    ><br /><br />
+    <label>작성자:</label><br />
+    <input v-model="newBoard.user" /><br /><br />
+    <button @click="addBoard">새글 추가</button><br /><br />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Boards, boardKey } from "@/components/types/Boards";
-const { find, create, delete: remove } = useStrapi();
+import type { Ref } from "vue";
+import qs from "qs";
 
-const newBoard: Boards = reactive({
-  title: null,
-  content: null,
-  user: null,
+const { find, create, delete: remove } = useStrapi();
+const boards = ref();
+const pagination: {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+} = reactive({
+  page: 1,
+  pageSize: 10,
+  pageCount: 0,
+  total: 0,
 });
-const { data: boards, refresh } = await useAsyncData("boards", () =>
-  find<Boards>("boards"),
+const newBoard: Boards = reactive({
+  title: "new",
+  content: "new",
+  user: "new",
+});
+async function getBoards(query: object): Promise<void> {
+  const res = await find<Boards>(`boards?${query}`);
+  boards.value = res.data;
+  pagination.page = res.meta.pagination.page;
+  pagination.total = res.meta.pagination.total;
+}
+const defaultQuery = qs.stringify(
+  {
+    publicationState: "preview",
+    populate: "*",
+    sort: ["createdAt:desc"],
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
+  },
+  {
+    encodeValuesOnly: true, // prettify URL
+  },
 );
+getBoards(defaultQuery);
 async function deleteBoard(id: number): Promise<void> {
   await remove<Boards>("boards", id);
-  await refresh();
+  await getBoards(defaultQuery);
 }
 async function addBoard(): Promise<void> {
   await create<Boards>("boards", newBoard);
-  await refresh();
-  /**
-   * NOTE:
-   * 오류가 발생한 이유는 Object.keys() 메서드가 반환하는 키 배열의 요소가 기본적으로 string 타입으로 되어 있기 때문입니다. 따라서 forEach 메서드에 전달되는 콜백 함수의 파라미터 타입도 string 타입으로 추론되어 버립니다.
-   * 이를 해결하기 위해서는 명시적으로 타입 캐스팅을 통해 콜백 함수의 파라미터 타입을 boardKey로 지정해주어야 합니다.
-   * TypeScript가 key 변수를 string 타입에서 boardKey 타입으로 올바르게 캐스팅하여 오류를 해결할 수 있습니다.
-   */
+  await getBoards(defaultQuery);
   Object.keys(newBoard).forEach((key: string) => {
     const boardKey = key as boardKey;
     newBoard[boardKey] = null;
   });
+}
+
+const keyword: Ref<string> = ref("");
+async function searchBoard(): Promise<void> {
+  pagination.page = 1;
+  const query = qs.stringify(
+    {
+      populate: "*",
+      sort: ["createdAt:desc"],
+      filters: {
+        title: {
+          $contains: keyword.value,
+        },
+      },
+      pagination: {
+        page: pagination.page,
+        pageSize: 10,
+      },
+    },
+    {
+      encodeValuesOnly: true, // prettify URL
+    },
+  );
+  await getBoards(query);
+}
+async function changePage(page: number): Promise<void> {
+  pagination.page = page;
+  const query = qs.stringify(
+    {
+      populate: "*",
+      sort: ["createdAt:desc"],
+      filters: {
+        title: {
+          $contains: keyword.value,
+        },
+      },
+      pagination: {
+        page: page + 1,
+        pageSize: 10,
+      },
+    },
+    {
+      encodeValuesOnly: true, // prettify URL
+    },
+  );
+  await getBoards(query);
 }
 </script>
 

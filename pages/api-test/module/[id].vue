@@ -13,6 +13,17 @@
       <label>작성자 :</label>
       <input v-model="board.user" />
     </div>
+    <div
+      class="input-field"
+      v-if="board.comments && board.comments.data.length > 0"
+    >
+      <label>댓글 :</label>
+      <div>
+        <p v-for="(comment, index) in board.comments.data">
+          {{ index + 1 }} : {{ comment.attributes.comment }}
+        </p>
+      </div>
+    </div>
     <div class="button-group">
       <button
         @click="
@@ -38,6 +49,7 @@ const boardId: number = +route.params.id;
 const response: Strapi4ResponseSingle<Boards> = await findOne<Boards>(
   "boards",
   boardId,
+  { populate: "*" },
 );
 const board: Ref<Boards> = ref(response.data.attributes);
 
