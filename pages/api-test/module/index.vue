@@ -5,6 +5,11 @@
       <input v-model="keyword" />
       <button @click="searchBoard">검색</button>
     </div>
+    <div>
+      <h3 @click="changeLocale">
+        locale 설정 : {{ locale === "ko" ? "한국어" : "영어" }}
+      </h3>
+    </div>
     <table border="1">
       <tr>
         <th>ID</th>
@@ -61,6 +66,7 @@
 import type { Boards, boardKey } from "@/components/types/Boards";
 import type { Ref } from "vue";
 import qs from "qs";
+import type { Strapi4ResponseMany } from "@nuxtjs/strapi/dist/runtime/types";
 
 const { find, create, delete: remove } = useStrapi();
 const boards = ref();
@@ -76,25 +82,29 @@ const pagination: {
   total: 0,
 });
 const newBoard: Boards = reactive({
-  title: "new",
-  content: "new",
-  user: "new",
+  title: "게시글",
+  content: "게시글",
+  user: "강이정",
 });
-async function getBoards(query: object): Promise<void> {
-  const res = await find<Boards>(`boards?${query}`);
+const locale: Ref<String> = ref("ko");
+async function getBoards(query: string): Promise<void> {
+  const res: Strapi4ResponseMany<Boards> = await find<Boards>(
+    `boards?${query}`,
+  );
+  console.log(locale.value);
   boards.value = res.data;
   pagination.page = res.meta.pagination.page;
   pagination.total = res.meta.pagination.total;
 }
-const defaultQuery = qs.stringify(
+const defaultQuery: string = qs.stringify(
   {
-    publicationState: "preview",
     populate: "*",
     sort: ["createdAt:desc"],
     pagination: {
       page: 1,
       pageSize: 10,
     },
+    locale: "ko",
   },
   {
     encodeValuesOnly: true, // prettify URL
@@ -117,7 +127,7 @@ async function addBoard(): Promise<void> {
 const keyword: Ref<string> = ref("");
 async function searchBoard(): Promise<void> {
   pagination.page = 1;
-  const query = qs.stringify(
+  const query: string = qs.stringify(
     {
       populate: "*",
       sort: ["createdAt:desc"],
@@ -130,6 +140,7 @@ async function searchBoard(): Promise<void> {
         page: pagination.page,
         pageSize: 10,
       },
+      locale: locale.value,
     },
     {
       encodeValuesOnly: true, // prettify URL
@@ -139,7 +150,7 @@ async function searchBoard(): Promise<void> {
 }
 async function changePage(page: number): Promise<void> {
   pagination.page = page;
-  const query = qs.stringify(
+  const query: string = qs.stringify(
     {
       populate: "*",
       sort: ["createdAt:desc"],
@@ -152,12 +163,39 @@ async function changePage(page: number): Promise<void> {
         page: page + 1,
         pageSize: 10,
       },
+      locale: locale.value,
     },
     {
       encodeValuesOnly: true, // prettify URL
     },
   );
   await getBoards(query);
+}
+
+function changeLocale() {
+  switch (locale.value) {
+    case "ko":
+      locale.value = "en";
+      break;
+    case "en":
+      locale.value = "ko";
+      break;
+  }
+  let query = qs.stringify(
+    {
+      populate: "*",
+      sort: ["createdAt:desc"],
+      pagination: {
+        page: 1,
+        pageSize: 10,
+      },
+      locale: locale.value,
+    },
+    {
+      encodeValuesOnly: true, // prettify URL
+    },
+  );
+  getBoards(query);
 }
 </script>
 

@@ -43,12 +43,11 @@ const newBoard: Boards = reactive({
   content: null,
   user: null,
 });
-const getBoards = async (): Promise<void> => {
+getBoards();
+async function getBoards(): Promise<void> {
   const res = await $fetch("http://localhost:1337/api/boards");
   boards.value = await res.data;
-};
-getBoards();
-
+}
 async function deleteBoard(id: number): Promise<void> {
   await $fetch(`http://localhost:1337/api/boards/${id}`, {
     method: "DELETE",

@@ -1,6 +1,6 @@
 <template>
   <div class="update-board">
-    <h1>{{ response.data.id }} 번째 게시글</h1>
+    <h1>{{ boardId }} 번째 게시글</h1>
     <div class="input-field">
       <label>제목 :</label>
       <input v-model="board.title" />
@@ -17,11 +17,16 @@
       class="input-field"
       v-if="board.comments && board.comments.data.length > 0"
     >
-      <label>댓글 :</label>
+      <p v-for="(comment, index) in board.comments.data">
+        {{ index + 1 }} : {{ comment.attributes.comment }}
+        <button @click="deleteComment(comment.id)">x</button>
+      </p>
+    </div>
+    <div class="input-field">
+      <label>댓글</label>
       <div>
-        <p v-for="(comment, index) in board.comments.data">
-          {{ index + 1 }} : {{ comment.attributes.comment }}
-        </p>
+        <input v-model="newComment.comment" />
+        <button @click="saveComment">댓글 등록</button>
       </div>
     </div>
     <div class="button-group">
@@ -40,10 +45,12 @@
 
 <script lang="ts" setup>
 import type { Boards } from "@/components/types/Boards";
-import type { Ref } from "vue";
 import type { Strapi4ResponseSingle } from "@nuxtjs/strapi/dist/runtime/types";
-const { findOne, update } = useStrapi();
+import type { Comments } from "@/components/types/Comments";
+import type { Ref } from "vue";
+const { findOne, update, create, delete: remove } = useStrapi();
 const route = useRoute();
+const router = useRouter();
 
 const boardId: number = +route.params.id;
 const response: Strapi4ResponseSingle<Boards> = await findOne<Boards>(
@@ -60,6 +67,19 @@ const updateBoard = async (): Promise<void> => {
     user: board.value.user,
   });
 };
+
+const newComment: Comments = reactive({
+  comment: "댓글 입니다.",
+  boards: boardId,
+});
+const saveComment = async (): Promise<void> => {
+  await create<Comments>("comments", newComment);
+  router.go(0);
+};
+async function deleteComment(id: number): Promise<void> {
+  await remove<Comments>("comments", id);
+  router.go(0);
+}
 </script>
 
 <style scoped>

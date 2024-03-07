@@ -1,3 +1,3 @@
-export type Comments = {
+export interface Comments {
   comment: string | null;
-};
+}
