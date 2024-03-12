@@ -37,6 +37,9 @@
       :current-item-type="NavigationItemEnum.Number"
       @change="changeTab2"
     ></Tab>
+
+    <h1>Loader Example</h1>
+    <button @click="loaderTest">Loader Test</button>
   </div>
 </template>
 
@@ -97,6 +100,19 @@ const currentTab2 = ref();
 currentTab2.value = 1;
 function changeTab2(item: number | string) {
   currentTab2.value = item;
+}
+
+/**
+ * loader
+ */
+const { $loader } = useNuxtApp();
+function loaderTest() {
+  console.log($loader);
+  $loader.start(false);
+
+  setTimeout(() => {
+    $loader.finish();
+  }, 900);
 }
 </script>
 
