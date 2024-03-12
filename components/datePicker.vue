@@ -50,10 +50,13 @@ const props = defineProps({
     default: "",
   },
   /**
-   * |date|datetime|year|month|time|week|
+   * NOTE: TypeScript에서 타입 검사를 수행하고, 특정한 문자열 값만을 허용하는 더 엄격한 타입을 제공
+   * 이는 코드를 더 안전하고 예측 가능하게 만들어줍니다.
    */
   type: {
-    type: String,
+    type: String as PropType<
+      "date" | "datetime" | "year" | "month" | "time" | "week"
+    >,
     default: "date",
   },
   range: {
